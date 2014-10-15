@@ -1,10 +1,10 @@
 var x = 5;
 var y = 75;
 var dx = 2;
-var dy = 2;
-// var paddlex;
-// var paddleh;
-// var paddlew;
+var dy = 1;
+var paddle1y;
+var paddle1h;
+var paddlew;
 var ctx;
 var width = 150;
 var height = 150;
@@ -22,18 +22,18 @@ function circle(x, y, r) {
   ctx.fill();
 }
 
-// function init_paddle() {
-//   paddlex = WIDTH / 2;
-//   paddleh = 10;
-//   paddlew = 75;
-// }
+function init_paddle1() {
+  paddle1y = height / 2;
+  paddle1h = 75;
+  paddlew = 10;
+}
 
-// function rect(x, y, w, h) {
-//   ctx.beginPath();
-//   ctx.rect(x, y, w, h);
-//   ctx.closePath();
-//   ctx.fill();
-// }
+function rect(x, y, w, h) {
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.closePath();
+  ctx.fill();
+}
 
 function clear() {
   ctx.clearRect(0, 0, width, height);
@@ -41,14 +41,19 @@ function clear() {
 function draw() {
   clear();
   circle(x, y, 5)
-  rect(paddlex, height-paddleh, paddlew, paddleh);
-  if (x + dx > width || x + dx < 0) {
-    dx *= -1;
-  } 
-  if (y + dy > width || y + dx < 0) {
+  rect(0, paddle1y , paddlew, paddle1h);
+  if (y + dy > height || y + dy < 0) {
     dy *= -1;
   } 
+  if (x + dx > height)
+    dx = -dx;
+  else if (x + dx < 0) {
+    if (y > paddle1y && y < paddle1y + paddle1h) {
+      dx = -dx;
+    }
+  }
   x += dx;
   y += dy;
 }
 init();
+init_paddle1();
