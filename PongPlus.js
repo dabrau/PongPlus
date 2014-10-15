@@ -2,9 +2,9 @@ var x = 5;
 var y = 75;
 var dx = 2;
 var dy = 2;
-var paddlex;
-var paddleh;
-var paddlew;
+// var paddlex;
+// var paddleh;
+// var paddlew;
 var ctx;
 var width = 150;
 var height = 150;
@@ -22,18 +22,18 @@ function circle(x, y, r) {
   ctx.fill();
 }
 
-function init_paddle() {
-  paddlex = WIDTH / 2;
-  paddleh = 10;
-  paddlew = 75;
-}
+// function init_paddle() {
+//   paddlex = WIDTH / 2;
+//   paddleh = 10;
+//   paddlew = 75;
+// }
 
-function rect(x, y, w, h) {
-  ctx.beginPath();
-  ctx.rect(x, y, w, h);
-  ctx.closePath();
-  ctx.fill();
-}
+// function rect(x, y, w, h) {
+//   ctx.beginPath();
+//   ctx.rect(x, y, w, h);
+//   ctx.closePath();
+//   ctx.fill();
+// }
 
 function clear() {
   ctx.clearRect(0, 0, width, height);
