@@ -1,8 +1,8 @@
-var x = 5;
-var y = 75;
-var dx = 2;
-var dy = 0;
-var ballRadius = 5;
+var x;
+var y;
+var dx;
+var dy;
+var ballRadius;
 
 var paddle1y;
 var paddle1h;
@@ -21,6 +21,9 @@ var height = 150;
 $("#start").on('click', start);
 
 function start(){
+  init_ball();
+  init_paddle1();
+  init_paddle2();
   var canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
   return intervalId = setInterval(draw,10);
@@ -31,6 +34,14 @@ function circle(x, y, r) {
   ctx.arc(x, y, r, 0,Math.PI*2,true); 
   ctx.closePath();
   ctx.fill();
+}
+
+function init_ball() { 
+  x = 5;
+  y = 75;
+  dx = 2;
+  dy = 0;
+  ballRadius = 5;
 }
 
 function init_paddle1() {
@@ -126,7 +137,7 @@ function draw() {
 
   rect(width - paddlew, paddle2y , paddlew, paddle2h);
   rect(0, paddle1y , paddlew, paddle1h);
-  if (y + dy + 5 > height || y + dy - 5 < 0) {
+  if (y + dy + 3 > height || y + dy - 3 < 0) {
     dy = -dy;
   } 
   if (x + dx + 5 > width) {
@@ -135,6 +146,7 @@ function draw() {
       dx = -Math.cos(((y-(paddle2y+paddle2h/2)))/(paddle2h/2) * 1.22) * 2;
     } else {
       clearInterval(intervalId);
+      clear();
       alert("Thanks for playing!")
     }
   }
@@ -144,13 +156,13 @@ function draw() {
       dx = Math.cos(((y-(paddle1y+paddle1h/2)))/(paddle1h/2) * 1.22) * 2;
     } else {
       clearInterval(intervalId);
-      alert("Thanks for playing!")
+      clear();
+      alert("Thanks for playing!");
     }
-  }
+  } 
+
 
   x += dx;
   y += dy;
 }
 
-init_paddle1();
-init_paddle2();
