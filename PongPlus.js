@@ -18,9 +18,9 @@ var ctx;
 var width = 150;
 var height = 150;
 
+$("#start").on('click', start);
 
-
-function init(){
+function start(){
   var canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
   return intervalId = setInterval(draw,10);
@@ -97,7 +97,7 @@ function onP2KeyUp(e) {
     wPressed = false;
   }
   else if (e.keyCode == 40) {
-    pPressed = false;
+    sPressed = false;
   }   
 }
 
@@ -126,22 +126,22 @@ function draw() {
 
   rect(width - paddlew, paddle2y , paddlew, paddle2h);
   rect(0, paddle1y , paddlew, paddle1h);
-  if (y + dy > height || y + dy < 0) {
+  if (y + dy + 5 > height || y + dy - 5 < 0) {
     dy = -dy;
   } 
-  if (x + dx > width) {
+  if (x + dx + 5 > width) {
     if (y > paddle2y && y < paddle2y + paddle1h) {
-      dy = Math.sin((y-(paddle2y+paddle2h)/2))/((paddle2y+paddle2h)/2) * 1.57) * 2 2;
-      dx = -(Math.sqrt(Math.pow(2,2) - Math.pow(dy,2)))
+      dy = Math.sin(((y-(paddle2y+paddle2h/2)))/(paddle2h/2) * 1.22) * 2;
+      dx = -Math.cos(((y-(paddle2y+paddle2h/2)))/(paddle2h/2) * 1.22) * 2;
     } else {
       clearInterval(intervalId);
       alert("Thanks for playing!")
     }
   }
-  else if (x + dx < 0) {
+  else if (x + dx - 5 < 0) {
     if (y > paddle1y && y < paddle1y + paddle1h) {
-      dy = 1 * ((y-(paddle1y+paddle1h/2))/paddlew);
-      dx = -dx;
+      dy = Math.sin(((y-(paddle1y+paddle1h/2)))/(paddle1h/2) * 1.22) * 2;
+      dx = Math.cos(((y-(paddle1y+paddle1h/2)))/(paddle1h/2) * 1.22) * 2;
     } else {
       clearInterval(intervalId);
       alert("Thanks for playing!")
@@ -151,6 +151,6 @@ function draw() {
   x += dx;
   y += dy;
 }
-init();
+
 init_paddle1();
 init_paddle2();

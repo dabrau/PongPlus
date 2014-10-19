@@ -9,6 +9,7 @@ var ball = {
 	d:,
 	dx:,
 	dy:,
+	v:,
 	r:,
 
 	draw: function () {
@@ -35,8 +36,11 @@ var ball = {
 	},
 
 	paddleCollision: function (paddle) {
-		this.dy = (y - paddle.yMid) * Math.sin(.6)  * speed
-		this.dx = -(Math.sqrt(speed**2 - this.dy**2))
+		var angleCoefficient = (y - paddle.yMid) / (paddle.h / 2);
+		var maxAngleInRadians = 1.22;
+		var collisionAngle = angleCoefficient * maxAngleInRadians;
+		this.dy = Math.sin(collisionAngle)  * v;
+		this.dx = -Math.cos(collisionAngle) * v;
 	}
 }
 
@@ -46,7 +50,7 @@ function Paddle(y, h, w, sens) {
 	this.w:,
 	this.surface:
 	this.yBottom: h + y;
-	this.yMid: (h + y) / 2
+	this.yMid: (this.h / 2 + this.y)
 	this.sens:, 
 	this.draw: function() {
   	ctx.beginPath();
