@@ -17,7 +17,7 @@ var paddle2sensitivity = 2
 var ctx;
 var width = 150;
 var height = 150;
-var game = true;
+
 
 
 function init(){
@@ -28,7 +28,7 @@ function init(){
 
 function circle(x, y, r) {
   ctx.beginPath();
-  ctx.arc(x, y, r, 0,Math.PI*2,true); // Outer circle
+  ctx.arc(x, y, r, 0,Math.PI*2,true); 
   ctx.closePath();
   ctx.fill();
 }
@@ -129,10 +129,10 @@ function draw() {
   if (y + dy > height || y + dy < 0) {
     dy = -dy;
   } 
-  if (x + dx > height) {
+  if (x + dx > width) {
     if (y > paddle2y && y < paddle2y + paddle1h) {
-      dy = 1 * ((y-(paddle2y+paddle2h/2))/paddlew);
-      dx = -dx;
+      dy = Math.sin((y-(paddle2y+paddle2h)/2))/((paddle2y+paddle2h)/2) * 1.57) * 2 2;
+      dx = -(Math.sqrt(Math.pow(2,2) - Math.pow(dy,2)))
     } else {
       clearInterval(intervalId);
       alert("Thanks for playing!")
