@@ -21,6 +21,7 @@ var height = 150;
 $("#start").on('click', start);
 
 function start(){
+  resetControls();
   init_ball();
   init_paddle1();
   init_paddle2();
@@ -37,7 +38,7 @@ function circle(x, y, r) {
 }
 
 function init_ball() { 
-  x = 5;
+  x = 15;
   y = 75;
   dx = 2;
   dy = 0;
@@ -45,15 +46,15 @@ function init_ball() {
 }
 
 function init_paddle1() {
-  paddle1y = height / 2;
   paddle1h = 50;
   paddlew = 10;
+  paddle1y = height / 2 - paddle1h / 2 ;
 }
 
 function init_paddle2() {
-  paddle2y = height / 2;
   paddle2h = 50;
   paddlew = 10;
+  paddle2y = height / 2 - paddle2h / 2;
 }
 
 function rect(x, y, w, h) {
@@ -67,11 +68,17 @@ function clear() {
   ctx.clearRect(0, 0, width, height);
 }
 
-upPressed = false;
-downPressed = false;
+var upPressed;
+var downPressed;
+var wPressed;
+var sPressed;
 
-wPressed = false;
-sPressed = false;
+function resetControls () {
+  upPressed = false;
+  downPressed = false;
+  wPressed = false;
+  sPressed = false;
+}
 
 function onP1KeyDown(e) {
   if (e.keyCode == 87) {
@@ -140,7 +147,7 @@ function draw() {
   if (y + dy + 3 > height || y + dy - 3 < 0) {
     dy = -dy;
   } 
-  if (x + dx + 5 > width) {
+  if (x + dx - 3 > width - paddlew) {
     if (y > paddle2y && y < paddle2y + paddle1h) {
       dy = Math.sin(((y-(paddle2y+paddle2h/2)))/(paddle2h/2) * 1.22) * 2;
       dx = -Math.cos(((y-(paddle2y+paddle2h/2)))/(paddle2h/2) * 1.22) * 2;
@@ -150,7 +157,7 @@ function draw() {
       alert("Thanks for playing!")
     }
   }
-  else if (x + dx - 5 < 0) {
+  else if (x + dx + 3 < paddlew) {
     if (y > paddle1y && y < paddle1y + paddle1h) {
       dy = Math.sin(((y-(paddle1y+paddle1h/2)))/(paddle1h/2) * 1.22) * 2;
       dx = Math.cos(((y-(paddle1y+paddle1h/2)))/(paddle1h/2) * 1.22) * 2;
