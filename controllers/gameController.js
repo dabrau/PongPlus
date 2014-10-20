@@ -16,9 +16,20 @@ var gameController = {};
 	}
 
 	gameController.initPaddleL = function() {
-		paddleL = new Paddle();
+		paddleL = new Paddle(50, 10, 0, 5);
 	}
 
 	gameController.initPaddleR = function() {
-		paddleR = new Paddle();
+		paddleR = new Paddle(50, 10, gameSpace.width - 10, 5);
+	}
+
+	gameController.init = function() {
+		this.getGameSpace("canvas");
+		this.initBall();
+		this.initPaddleL();
+		this.initPaddleR();
+	}
+
+	gameController.draw = function() {
+		
 	}
