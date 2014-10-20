@@ -144,7 +144,7 @@ function draw() {
 
   rect(width - paddlew, paddle2y , paddlew, paddle2h);
   rect(0, paddle1y , paddlew, paddle1h);
-  if (y + dy + 3 > height || y + dy - 3 < 0) {
+  if (y + dy - 3 > height || y + dy + 3 < 0) {
     dy = -dy;
   } 
   if (x + dx - 3 > width - paddlew) {
