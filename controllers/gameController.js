@@ -33,6 +33,8 @@ var gameController = {};
 		this.initPaddleR();
 	};
 
+	gameController.intervalId = undefined;
+
 	gameController.start = function() {
 		gameController.init();
 		return intervalId = setInterval(gameController.pong, 10);
@@ -42,21 +44,15 @@ var gameController = {};
 		gameSpace.clear();
 		gameSpace.draw();
 
-		if (paddleR.upKeyPressed && paddleR.yTop >= 0 ) {
+		if (paddleR.upKeyPressed && paddleR.validUpMove()) {
 			paddleR.moveUp();
-		} else if (paddleR.downKeyPressed && paddleR.yBottom() <= gameSpace.height){
+		} else if (paddleR.downKeyPressed && paddleR.validDownMove()){
 			paddleR.moveDown();
 		}
 
-		if (ball.hitTopWall()) {
-			ball.wallCollision();
-		} else if (ball.hitBottomWall()) {
-			ball.wallCollision();
-		} else if (ball.hitLpaddle()) {
-			ball.paddleCollision(paddleL);
-		} else if (ball.hitRpaddle()) {
-			ball.paddleCollision(paddleR);
-		} else if (ball.out()) {
+		ball.directionChange();
+
+	  if (ball.out()) {
 			clearInterval(intervalId);
 		};
 

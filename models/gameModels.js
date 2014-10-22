@@ -17,13 +17,13 @@ var ball = {
 	y: undefined,
 	dx: undefined,
 	dy: undefined,
-	v: undefined,
-	r: undefined,
+	v: undefined, //velocity
+	r: undefined, //radius
 	collisionPadding: undefined,
 
 	draw: function() {
   	gameSpace.ctx.beginPath();
-  	gameSpace.ctx.arc(ball.x, ball.y, ball.r, 0,Math.PI*2,true); 
+  	gameSpace.ctx.arc(this.x, this.y, this.r, 0,Math.PI*2,true); 
   	gameSpace.ctx.closePath();
   	gameSpace.ctx.fill();
 	},
@@ -72,6 +72,18 @@ var ball = {
 
 	out: function() {
 		return this.x < 0 || this.x > gameSpace.width;
+	},
+
+	directionChange: function() {
+		if (this.hitTopWall()) {
+			this.wallCollision();
+		} else if (this.hitBottomWall()) {
+			this.wallCollision();
+		} else if (this.hitLpaddle()) {
+			this.paddleCollision(paddleL);
+		} else if (ball.hitRpaddle()) {
+			this.paddleCollision(paddleR);
+		}
 	}
 }
 
@@ -103,6 +115,14 @@ Paddle.prototype.moveUp = function() {
 
 Paddle.prototype.moveDown = function() {
 	this.yTop += this.sens;
+}
+
+Paddle.prototype.validUpMove = function() {
+	return this.yTop >= 0;
+}
+
+Paddle.prototype.validDownMove = function() {
+	return this.yBottom() <= gameSpace.height;
 }
 
 
