@@ -1,0 +1,26 @@
+{
+  "name": "PongPlus",
+  "version": "0.0.0",
+  "description": "getting multiplayer",
+  "dependencies": {
+    "express": "^4.10.0",
+    "query-string": "^1.0.0",
+    "request": "^2.46.0",
+    "socket.io": "^1.1.0",
+    "uuid": "^2.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dabrau/PongPlus.git"
+  },
+  "author": "Darrell Abrau",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dabrau/PongPlus/issues"
+  },
+  "homepage": "https://github.com/dabrau/PongPlus"
+}
