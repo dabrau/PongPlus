@@ -9,20 +9,20 @@ var gameController = {};
 	gameController.initBall = function() {
 		ball.x = 40;
 		ball.y = gameSpace.height / 2;
-		ball.dx = 2;
+		ball.dx = 3;
 		ball.dy = 0;
-		ball.v = 2;
+		ball.v = 3;
 		ball.r = 5;
 		ball.collisionPadding = 3;
 	};
 
 	gameController.initPaddleL = function() {
-		paddleL = new Paddle(50, 10, 0, 2);
+		paddleL = new Paddle(70, 10, 0, 2);
 		paddleL.surface = 0 + paddleL.w;
 	};
 
 	gameController.initPaddleR = function() {
-		paddleR = new Paddle(50, 10, gameSpace.width - 10, 2);
+		paddleR = new Paddle(70, 10, gameSpace.width - 10, 2);
 		paddleR.surface = paddleR.x;
 	};
 
@@ -50,6 +50,12 @@ var gameController = {};
 			paddleR.moveDown();
 		}
 
+		if (paddleL.upKeyPressed && paddleL.validUpMove()) {
+			paddleL.moveUp();
+		} else if (paddleL.downKeyPressed && paddleL.validDownMove()){
+			paddleL.moveDown();
+		}
+
 		ball.directionChange();
 
 	  if (ball.out()) {
@@ -64,6 +70,12 @@ var gameController = {};
 			paddleR.upKeyPressed = true;
 		} else if (e.keyCode == 40) {
 			paddleR.downKeyPressed = true;
+		} 
+
+		if (e.keyCode == 87) {
+			paddleL.upKeyPressed = true;
+		} else if (e.keyCode == 83) {
+			paddleL.downKeyPressed = true;
 		}
 	};
 
@@ -72,6 +84,12 @@ var gameController = {};
 			paddleR.upKeyPressed = false;
 		} else if (e.keyCode == 40) {
 			paddleR.downKeyPressed = false;
+		}
+
+		if (e.keyCode == 87) {
+			paddleL.upKeyPressed = false;
+		} else if (e.keyCode == 83) {
+			paddleL.downKeyPressed = false;
 		}
 	};
 
