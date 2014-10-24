@@ -93,5 +93,16 @@ var gameController = {};
 		}
 	};
 
+var Cheats = {}
+	Cheats.godMode =  function(LorR) {
+		if (LorR === 'L') {
+			paddleL.yTop = 0;
+			paddleL.h = gameSpace.height;
+		} else if (LorR === 'R') {
+			paddleR.yTop = 0;
+			paddleR.h = gameSpace.height;
+		}
+	}
+
 
 
