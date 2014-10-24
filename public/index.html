@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+    <style type="text/css">
+      canvas { border: 1px solid black; }
+    </style>
+  </head>
+  <body>
+    <div id="date"></div>
+    <div>This is our socket.html file</div>
+    <canvas id="canvas" width="150" height="150"></canvas>
+    <button class="start">Start</button>
+    <script type="text/javascript" src="gameView.js"></script>
+    <script>
+      var socket = io.connect();
+
+      socket.on('message', function(data){
+        console.log(data.message);
+      });
+
+      socket.on('date', function(data){
+        $('#date').text(data.date);
+          console.log(data.date);
+        });
+
+      setInterval(function(){
+        socket.emit('client_data', {'cow': 'cowabunga'})
+      }, 10000)
+
+
+      socket.on('GS', function(pos) {
+        gameSpace.clear();
+        gameSpace.draw(pos.x, pos.y, pos.l, pos.r);
+      });
+
+
+
+
+    </script>
+  </body>
+</html>
