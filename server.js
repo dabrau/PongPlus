@@ -1,7 +1,7 @@
 var gameport        = process.env.PORT || 3000;
 var io              = require('socket.io');
 var express         = require('express');
-var UUID            = require('node-uuid');
+var UUID            = require('uuid');
 
 var http            = require('http');
 var app             = express();
