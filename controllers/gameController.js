@@ -59,6 +59,7 @@ var gameController = {};
 		ball.directionChange();
 
 	  if (ball.out()) {
+	  	$('.start').show();
 			clearInterval(intervalId);
 		};
 
