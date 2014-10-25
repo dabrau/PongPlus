@@ -11,10 +11,10 @@ var server          = app.listen(3000);
 
 app.use(express.static(__dirname + '/public'));
 
-// app.get('/', function(req, res) {
-// 	res.render('index');
-// });
+var game = require('./game.js')
 
+var currentGame = new game(123);
+console.log(currentGame.ball.nextYposition())
 
 
 
