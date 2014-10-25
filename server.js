@@ -14,7 +14,7 @@ app.use(express.static(__dirname + '/public'));
 var game = require('./game.js')
 
 var currentGame = new game(123);
-console.log(currentGame.ball.nextYposition())
+console.log(currentGame.state())
 
 
 
