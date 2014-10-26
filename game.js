@@ -1,6 +1,8 @@
 function Game(gameInstance) {
 	this.gameID = gameInstance;
 
+	this.gameInterval = undefined;
+
 	this.space = {
 		width: 150,
 		height: 150
@@ -22,8 +24,34 @@ function Game(gameInstance) {
 
 Game.prototype.state = function() {
 	return {'x': this.ball.x, 'y': this.ball.y, 'l': this.paddleL.yTop, 'r': this.paddleR.yTop}
-} 
+};
 
+// Game.prototype.start = function() {
+// 		this.gameInterval = setInterval(this.pong(), 16);
+// }; 
+
+Game.prototype.pong = function() {
+	if (this.paddleR.upPressed && this.paddleR.validUpMove(this.space)) {
+		this.paddleR.moveUp();
+	} else if (this.paddleR.downPressed && this.paddleR.validDownMove()){
+		this.paddleR.moveDown();
+	}
+
+	if (this.paddleL.upPressed && this.paddleL.validUpMove(this.space)) {
+		this.paddleL.moveUp();
+	} else if (this.paddleL.downPressed && this.paddleL.validDownMove()){
+		this.paddleL.moveDown();
+	} 
+
+	// if (this.ball.out(this.space)) {
+	// 	clearInterval(this.gameInterval)
+	// }
+
+	this.ball.directionChange(this.space, this.paddleL, this.paddleR);
+
+	this.ball.move();
+
+};
 
 function Ball() {
 	//initial ball properties
@@ -35,12 +63,6 @@ function Ball() {
 	this.r = 5; //radius
 	this.collisionPadding = 3;
 }
-	// draw: function() {
-	//  	gameSpace.ctx.beginPath();
-	//  	gameSpace.ctx.arc(this.x, this.y, this.r, 0,Math.PI*2,true); 
-	//  	gameSpace.ctx.closePath();
-	//  	gameSpace.ctx.fill();
-	// },
 
 Ball.prototype.nextYposition = function() {
 	return this.y + this.dy;
@@ -95,7 +117,7 @@ Ball.prototype.directionChange = function(space, paddleL, paddleR) {
 		this.wallCollision();
 	} else if (this.hitLpaddle(paddleL)) {
 		this.paddleCollision(paddleL);
-	} else if (ball.hitRpaddle(paddleR)) {
+	} else if (this.hitRpaddle(paddleR)) {
 		this.paddleCollision(paddleR);
 	}
 };
@@ -119,10 +141,6 @@ Paddle.prototype.yMid = function () {
 	return this.h / 2 + this.yTop
 }
 
-// Paddle.prototype.draw = function() {
-// 	gameSpace.ctx.fillRect(this.x, this.yTop, this.w, this.h);
-// }
-
 Paddle.prototype.moveUp = function() {
 	this.yTop -= this.sens;
 }
@@ -135,7 +153,7 @@ Paddle.prototype.validUpMove = function() {
 	return this.yTop >= 0;
 }
 
-Paddle.prototype.validDownMove = function() {
+Paddle.prototype.validDownMove = function(gameSpace) {
 	return this.yBottom() <= gameSpace.height;
 }
 
@@ -145,6 +163,12 @@ Paddle.prototype.validDownMove = function() {
 
 
 module.exports = Game;
+
+
+
+
+
+
 
 
 

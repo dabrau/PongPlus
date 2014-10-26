@@ -1,21 +1,54 @@
-// var gameport        = process.env.PORT || 3000;
-var io              = require('socket.io');
 var express         = require('express');
 var UUID            = require('uuid');
 var http            = require('http');
 
 var app             = express();
 var server          = app.listen(3000);
-
-
-
-app.use(express.static(__dirname + '/public'));
+var io              = require('socket.io')(server);
 
 var game = require('./game.js')
 
+app.use(express.static(__dirname + '/public'));
+
 var currentGame = new game(123);
-console.log(currentGame.state())
+console.log(currentGame.state());
+console.log(currentGame.state());
 
+io.on('connection', function (socket) {
 
+	socket.emit('news', {hello: 'world'});
+
+	socket.on('my other event', function (data) {
+		console.log(data);
+	});
+
+	socket.on('start', function() {
+		var gameInterval = setInterval(function() {
+			currentGame.pong();
+			socket.emit('gameState', currentGame.state());
+			if (currentGame.ball.out(currentGame.space)) {
+				clearInterval(gameInterval);
+			}
+		}, 16);
+	});
+
+	socket.on('move', function (data) {
+		if (data.key === 38) {
+			currentGame.paddleL.upPressed = true;
+		}
+		if (data.key === 40) {
+			currentGame.paddleL.downPressed = true;
+		}
+	});
+
+	socket.on('stop', function (data) {
+		if (data.key === 38) {
+			currentGame.paddleL.upPressed = false;
+		}
+		if (data.key === 40) {
+			currentGame.paddleL.downPressed = false;
+		}
+	});
+});
 
 
