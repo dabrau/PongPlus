@@ -1,11 +1,12 @@
 
 
 var draw = {};
+
 	draw.ctx = document.getElementById('canvas').getContext("2d");
 
-	draw.game = function(x,y,l,r) {
+	draw.game = function(x, y, l, r) {
 		this.clear();
-		this.ball(x,y);
+		this.ball(x, y);
 		this.lPaddle(l);
 		this.rPaddle(r);
 	};
@@ -57,6 +58,8 @@ $('.start').on('click', function () {
 		socket.emit('stop', {key: e.keyCode})
 	});
 });
+
+console.log(draw.ctx)
 
 
 
