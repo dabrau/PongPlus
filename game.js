@@ -26,26 +26,18 @@ Game.prototype.state = function() {
 	return {'x': this.ball.x, 'y': this.ball.y, 'l': this.paddleL.yTop, 'r': this.paddleR.yTop}
 };
 
-// Game.prototype.start = function() {
-// 		this.gameInterval = setInterval(this.pong(), 16);
-// }; 
-
 Game.prototype.pong = function() {
-	if (this.paddleR.upPressed && this.paddleR.validUpMove(this.space)) {
+	if (this.paddleR.upPressed && this.paddleR.validUpMove()) {
 		this.paddleR.moveUp();
-	} else if (this.paddleR.downPressed && this.paddleR.validDownMove()){
+	} else if (this.paddleR.downPressed && this.paddleR.validDownMove(this.space)){
 		this.paddleR.moveDown();
 	}
 
-	if (this.paddleL.upPressed && this.paddleL.validUpMove(this.space)) {
+	if (this.paddleL.upPressed && this.paddleL.validUpMove()) {
 		this.paddleL.moveUp();
-	} else if (this.paddleL.downPressed && this.paddleL.validDownMove()){
+	} else if (this.paddleL.downPressed && this.paddleL.validDownMove(this.space)){
 		this.paddleL.moveDown();
 	} 
-
-	// if (this.ball.out(this.space)) {
-	// 	clearInterval(this.gameInterval)
-	// }
 
 	this.ball.directionChange(this.space, this.paddleL, this.paddleR);
 
@@ -158,17 +150,6 @@ Paddle.prototype.validDownMove = function(gameSpace) {
 }
 
 
-
-
-
-
 module.exports = Game;
-
-
-
-
-
-
-
 
 

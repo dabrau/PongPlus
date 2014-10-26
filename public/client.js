@@ -34,13 +34,8 @@ var draw = {};
 
 var socket = io.connect();
 
-socket.on('news', function (data) {
-  console.log(data);
-  socket.emit('my other event', { my: 'data' });
-});
 
 socket.on('gameState', function(data) {
-	console.log(data)
 	draw.game(data.x, data.y, data.l, data.r);
 });
 
@@ -60,7 +55,3 @@ $('.start').on('click', function () {
 });
 
 console.log(draw.ctx)
-
-
-
-

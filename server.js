@@ -11,16 +11,9 @@ var game = require('./game.js')
 app.use(express.static(__dirname + '/public'));
 
 var currentGame = new game(123);
-console.log(currentGame.state());
-console.log(currentGame.state());
+
 
 io.on('connection', function (socket) {
-
-	socket.emit('news', {hello: 'world'});
-
-	socket.on('my other event', function (data) {
-		console.log(data);
-	});
 
 	socket.on('start', function() {
 		var gameInterval = setInterval(function() {
@@ -34,7 +27,7 @@ io.on('connection', function (socket) {
 
 	socket.on('move', function (data) {
 		if (data.key === 38) {
-			currentGame.paddleL.upPressed = true;
+		currentGame.paddleL.upPressed = true;
 		}
 		if (data.key === 40) {
 			currentGame.paddleL.downPressed = true;
