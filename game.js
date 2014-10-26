@@ -4,13 +4,13 @@ function Game(gameInstance) {
 	this.gameInterval = undefined;
 
 	this.space = {
-		width: 150,
+		width: 400,
 		height: 150
 	};
 
-	this.players = {
-		self: undefined,
-		other: undefined
+	this.player = {
+		left: undefined,
+		right: undefined
 	};
 
 	this.ball = new Ball(this.space);
@@ -19,7 +19,7 @@ function Game(gameInstance) {
 	this.paddleL.surface = 10; //paddle width
 
 	this.paddleR = new Paddle(this.space, 50, 10, this.space.width - 10, 2);
-	this.paddleR.surface = 140; //space width - paddle width
+	this.paddleR.surface = 390; //space width - paddle width
 }
 
 Game.prototype.state = function() {
@@ -51,7 +51,7 @@ function Ball() {
 	this.y =  75;
 	this.dx = 2;
 	this.dy = 0;
-	this.v = 2; //velocity
+	this.v = 1; //velocity
 	this.r = 5; //radius
 	this.collisionPadding = 3;
 }
@@ -151,5 +151,9 @@ Paddle.prototype.validDownMove = function(gameSpace) {
 
 
 module.exports = Game;
+
+
+
+
 
 

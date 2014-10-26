@@ -14,34 +14,60 @@ var currentGame = new game(123);
 
 
 io.on('connection', function (socket) {
+	
+	socket.userid = UUID();
+	
+	socket.emit('onconnected', {id: socket.userid});
+	if (currentGame.player.left === undefined) {
+		currentGame.player.left = socket.userid;
+	} else if (currentGame.player.right === undefined) {
+		currentGame.player.right = socket.userid;
+	}
+
+	console.log(currentGame.player.left)
+	console.log(currentGame.player.right)
 
 	socket.on('start', function() {
 		var gameInterval = setInterval(function() {
 			currentGame.pong();
-			socket.emit('gameState', currentGame.state());
 			if (currentGame.ball.out(currentGame.space)) {
 				clearInterval(gameInterval);
 			}
 		}, 16);
 	});
 
+	
+	setInterval(function() {
+		socket.emit('gameState', currentGame.state());
+	}, 16);
+
 	socket.on('move', function (data) {
-		if (data.key === 38) {
+		if (data.key === 38 && data.id === currentGame.player.left) {
 		currentGame.paddleL.upPressed = true;
 		}
-		if (data.key === 40) {
+		if (data.key === 40 && data.id === currentGame.player.left) {
 			currentGame.paddleL.downPressed = true;
+		}
+		if (data.key === 38 && data.id === currentGame.player.right) {
+		currentGame.paddleR.upPressed = true;
+		}
+		if (data.key === 40 && data.id === currentGame.player.right) {
+			currentGame.paddleR.downPressed = true;
 		}
 	});
 
 	socket.on('stop', function (data) {
-		if (data.key === 38) {
-			currentGame.paddleL.upPressed = false;
+		if (data.key === 38 && data.id === currentGame.player.left) {
+		currentGame.paddleL.upPressed = false;
 		}
-		if (data.key === 40) {
+		if (data.key === 40 && data.id === currentGame.player.left) {
 			currentGame.paddleL.downPressed = false;
+		}
+		if (data.key === 38 && data.id === currentGame.player.right) {
+		currentGame.paddleR.upPressed = false;
+		}
+		if (data.key === 40 && data.id === currentGame.player.right) {
+			currentGame.paddleR.downPressed = false;
 		}
 	});
 });
-
-

@@ -27,13 +27,16 @@ var draw = {};
 	}
 
 	draw.rPaddle = function(y) {
-		this.ctx.fillRect(140, y, 10, 50);
+		this.ctx.fillRect(490, y, 10, 50);
 	}
 
-
+var userid = undefined;
 
 var socket = io.connect();
 
+socket.on('onconnected', function(data) {
+	userid = data.id;
+});
 
 socket.on('gameState', function(data) {
 	draw.game(data.x, data.y, data.l, data.r);
@@ -44,14 +47,15 @@ socket.on('gameState', function(data) {
 
 $('.start').on('click', function () {
 	socket.emit('start');
+	$(this).hide();
 
 	$(document).on('keydown', function(e) {
-		socket.emit('move', {key: e.keyCode})
+		socket.emit('move', {key: e.keyCode, id: userid})
 	});
 
 	$(document).on('keyup', function(e) {
-		socket.emit('stop', {key: e.keyCode})
+		socket.emit('stop', {key: e.keyCode, id: userid})
 	});
 });
 
-console.log(draw.ctx)
+
