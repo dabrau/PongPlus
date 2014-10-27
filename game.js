@@ -4,8 +4,8 @@ function Game(gameInstance) {
 	this.gameInterval = undefined;
 
 	this.space = {
-		width: 400,
-		height: 150
+		width: 450,
+		height: 300
 	};
 
 	this.player = {
@@ -15,11 +15,11 @@ function Game(gameInstance) {
 
 	this.ball = new Ball(this.space);
 
-	this.paddleL = new Paddle(this.space, 50, 10, 0, 2);
+	this.paddleL = new Paddle(this.space, 75, 10, 0, 5);
 	this.paddleL.surface = 10; //paddle width
 
-	this.paddleR = new Paddle(this.space, 50, 10, this.space.width - 10, 2);
-	this.paddleR.surface = 390; //space width - paddle width
+	this.paddleR = new Paddle(this.space, 75, 10, this.space.width - 10, 5);
+	this.paddleR.surface = 440; //space width - paddle width
 }
 
 Game.prototype.state = function() {
@@ -45,13 +45,13 @@ Game.prototype.pong = function() {
 
 };
 
-function Ball() {
+function Ball(space) {
 	//initial ball properties
-	this.x =  25;
-	this.y =  75;
-	this.dx = 2;
+	this.x =  space.width / 4;
+	this.y =  space.height / 2;
+	this.dx = 3;
 	this.dy = 0;
-	this.v = 1; //velocity
+	this.v = 3; //velocity
 	this.r = 5; //radius
 	this.collisionPadding = 3;
 }
@@ -151,9 +151,3 @@ Paddle.prototype.validDownMove = function(gameSpace) {
 
 
 module.exports = Game;
-
-
-
-
-
-

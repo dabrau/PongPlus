@@ -20,17 +20,22 @@ io.on('connection', function (socket) {
 	socket.emit('onconnected', {id: socket.userid});
 	if (currentGame.player.left === undefined) {
 		currentGame.player.left = socket.userid;
+		socket.emit('player', {id: currentGame.player.left, p: 'L'});
 	} else if (currentGame.player.right === undefined) {
 		currentGame.player.right = socket.userid;
+		socket.emit('player', {id: currentGame.player.right, p: 'R'});
 	}
 
 	console.log(currentGame.player.left)
 	console.log(currentGame.player.right)
 
+		
+
 	socket.on('start', function() {
 		var gameInterval = setInterval(function() {
 			currentGame.pong();
 			if (currentGame.ball.out(currentGame.space)) {
+				currentGame = new game();
 				clearInterval(gameInterval);
 			}
 		}, 16);
@@ -43,13 +48,13 @@ io.on('connection', function (socket) {
 
 	socket.on('move', function (data) {
 		if (data.key === 38 && data.id === currentGame.player.left) {
-		currentGame.paddleL.upPressed = true;
+			currentGame.paddleL.upPressed = true;
 		}
 		if (data.key === 40 && data.id === currentGame.player.left) {
 			currentGame.paddleL.downPressed = true;
 		}
 		if (data.key === 38 && data.id === currentGame.player.right) {
-		currentGame.paddleR.upPressed = true;
+			currentGame.paddleR.upPressed = true;
 		}
 		if (data.key === 40 && data.id === currentGame.player.right) {
 			currentGame.paddleR.downPressed = true;
@@ -58,16 +63,18 @@ io.on('connection', function (socket) {
 
 	socket.on('stop', function (data) {
 		if (data.key === 38 && data.id === currentGame.player.left) {
-		currentGame.paddleL.upPressed = false;
+			currentGame.paddleL.upPressed = false;
 		}
 		if (data.key === 40 && data.id === currentGame.player.left) {
 			currentGame.paddleL.downPressed = false;
 		}
 		if (data.key === 38 && data.id === currentGame.player.right) {
-		currentGame.paddleR.upPressed = false;
+			currentGame.paddleR.upPressed = false;
 		}
 		if (data.key === 40 && data.id === currentGame.player.right) {
 			currentGame.paddleR.downPressed = false;
 		}
 	});
 });
+
+
