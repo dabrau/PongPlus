@@ -15,10 +15,10 @@ function Game(gameInstance) {
 
 	this.ball = new Ball(this.space);
 
-	this.paddleL = new Paddle(this.space, 75, 10, 0, 5);
+	this.paddleL = new Paddle(this.space, 75, 10, 0, 3);
 	this.paddleL.surface = 10; //paddle width
 
-	this.paddleR = new Paddle(this.space, 75, 10, this.space.width - 10, 5);
+	this.paddleR = new Paddle(this.space, 75, 10, this.space.width - 10, 3);
 	this.paddleR.surface = 440; //space width - paddle width
 }
 
@@ -49,11 +49,11 @@ function Ball(space) {
 	//initial ball properties
 	this.x =  space.width / 4;
 	this.y =  space.height / 2;
-	this.dx = 3;
+	this.dx = 7;
 	this.dy = 0;
-	this.v = 3; //velocity
+	this.v = 7; //velocity
 	this.r = 5; //radius
-	this.collisionPadding = 3;
+	this.collisionPadding = 6;
 }
 
 Ball.prototype.nextYposition = function() {
@@ -151,3 +151,5 @@ Paddle.prototype.validDownMove = function(gameSpace) {
 
 
 module.exports = Game;
+
+
