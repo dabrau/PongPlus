@@ -12,7 +12,6 @@ app.use(express.static(__dirname + '/public'));
 
 var currentGame = new game(123);
 
-
 io.on('connection', function (socket) {
 	
 	socket.userid = UUID();
@@ -34,7 +33,7 @@ io.on('connection', function (socket) {
 	socket.on('start', function() {
 		var gameInterval = setInterval(function() {
 			currentGame.pong();
-			// socket.emit('gameState', currentGame.state());
+			io.emit('gameState', currentGame.state());
 			if (currentGame.ball.out(currentGame.space)) {
 				currentGame = new game();
 				clearInterval(gameInterval);
@@ -43,9 +42,9 @@ io.on('connection', function (socket) {
 	});
 
 	
-	setInterval(function() {
-		socket.emit('gameState', currentGame.state());
-	}, 16);
+	// setInterval(function() {
+	// 	socket.emit('gameState', currentGame.state());
+	// }, 16);
 
 	socket.on('move', function (data) {
 		if (data.key === 38 && data.id === currentGame.player.left) {
