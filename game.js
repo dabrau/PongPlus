@@ -16,42 +16,30 @@ function Game(gameInstance) {
 
 	this.paddleR = new Paddle(this.space, 75, 10, this.space.width - 10, 5, 5);
 	this.paddleR.surface = 440; //space width - paddle width
-}
+};
 
 Game.prototype.state = function() {
 	return {'x': this.ball.x, 'y': this.ball.y, 'l': this.paddleL.yTop, 'lh': this.paddleL.h, 'r': this.paddleR.yTop, 'rh': this.paddleR.h}
 };
 
-//shorten paddle when ball collides and reposition
-Game.prototype.plusFeature = function() {
- 	if (this.ball.hitRpaddle(this.paddleR)) {
- 		this.paddleR.shortenHeight();
- 		this.paddleR.reposition();
- 	} else if (this.ball.hitLpaddle(this.paddleL)) {
- 		this.paddleL.shortenHeight();
- 		this.paddleL.reposition();
+//shorten paddle and reposition when ball collides
+Game.prototype.plusFeature = function(ball, paddleR, paddleL) {
+ 	if (ball.hitRpaddle(paddleR)) {
+ 		paddleR.shortenHeight();
+ 		paddleR.reposition();
+ 	} 
+ 	if (ball.hitLpaddle(paddleL)) {
+ 		paddleL.shortenHeight();
+ 		paddleL.reposition();
  	}
-}
+};
 
 Game.prototype.pong = function() {
-	if (this.paddleR.upPressed && this.paddleR.validUpMove()) {
-		this.paddleR.moveUp();
-	} else if (this.paddleR.downPressed && this.paddleR.validDownMove(this.space)){
-		this.paddleR.moveDown();
-	}
-
-	if (this.paddleL.upPressed && this.paddleL.validUpMove()) {
-		this.paddleL.moveUp();
-	} else if (this.paddleL.downPressed && this.paddleL.validDownMove(this.space)){
-		this.paddleL.moveDown();
-	} 
-
-	this.plusFeature();
-
+	this.paddleR.move(this.space)
+	this.paddleL.move(this.space)
+	this.plusFeature(this.ball, this.paddleR, this.paddleL);
 	this.ball.directionChange(this.space, this.paddleL, this.paddleR);
-
 	this.ball.move();
-
 };
 
 function Ball(space) {
@@ -110,33 +98,20 @@ Ball.prototype.collisionAngle = function(coefficient) {
 
 Ball.prototype.dxNew = function(collisionAngle, v) {
 	if (this.dx > 0)  {
-		this.dx = -Math.cos(collisionAngle) * this.v;
+		this.dx = -Math.cos(collisionAngle) * v;
 	} else {
-		this.dx = Math.cos(collisionAngle) * this.v
+		this.dx = Math.cos(collisionAngle) * v
 	}
 };
 
 Ball.prototype.dyNew = function(collisionAngle, v) {
-	this.dy = Math.sin(collisionAngle)  * this.v;
+	this.dy = Math.sin(collisionAngle)  * v;
 };
 
 Ball.prototype.paddleBounceDxDy = function(v, collisionAngle) {
 	this.dxNew(collisionAngle, v);
 	this.dyNew(collisionAngle, v);
 }
-
-// Ball.prototype.paddleCollision = function(paddle) {
-// 	var angleCoefficient = (this.y - paddle.yMid()) / (paddle.h / 2);
-// 	var maxAngleRadians = 1.22;
-// 	var collisionAngle = angleCoefficient * maxAngleRadians;
-// 	var dxNew = Math.cos(collisionAngle);
-// 	this.dy = Math.sin(collisionAngle)  * this.v;
-// 	if (this.dx > 0) {
-// 		this.dx = -dxNew * this.v;
-// 	} else {
-// 		this.dx = dxNew * this.v;
-// 	}
-// };
 
 Ball.prototype.paddleCollision = function(paddle, v) {
 	this.paddleBounceDxDy(v, 
@@ -158,9 +133,11 @@ Ball.prototype.out = function(gameSpace) {
 Ball.prototype.directionChange = function(space, paddleL, paddleR) {
 	if (this.hitTopWall() || this.hitBottomWall(space)) {
 		this.wallCollision();
-	} else if (this.hitLpaddle(paddleL)) {
+	}
+	if (this.hitLpaddle(paddleL)) {
 		this.paddleCollision(paddleL, this.v);
-	} else if (this.hitRpaddle(paddleR)) {
+	}
+	if (this.hitRpaddle(paddleR)) {
 		this.paddleCollision(paddleR, this.v);
 	}
 };
@@ -176,30 +153,31 @@ function Paddle(gameSpace, h, w, x, sens, shortenLength) {
 	this.sens = sens; //number of pixels moved per frame
 	this.upPressed = false;
 	this.downPressed = false;
-}
+};
+
 Paddle.prototype.yBottom = function () {
 	return this.h + this.yTop;
-}
+};
 
 Paddle.prototype.yMid = function () {
 	return this.h / 2 + this.yTop
-}
+};
 
 Paddle.prototype.moveUp = function() {
 	this.yTop -= this.sens;
-}
+};
 
 Paddle.prototype.moveDown = function() {
 	this.yTop += this.sens;
-}
+};
 
 Paddle.prototype.validUpMove = function() {
 	return this.yTop >= 0;
-}
+};
 
 Paddle.prototype.validDownMove = function(gameSpace) {
 	return this.yBottom() <= gameSpace.height;
-}
+};
 
 //shorten the paddle 
 Paddle.prototype.shortenHeight = function() {
@@ -208,14 +186,19 @@ Paddle.prototype.shortenHeight = function() {
 	} else {
 		this.h -= this.shortenLength;
 	}
-}
+};
 
 Paddle.prototype.reposition = function() {
 	this.yTop += this.shortenLength / 2; //reposition the paddle when it gets shorter
-}
+};
 
-
-
+Paddle.prototype.move = function (space) {
+	if (this.upPressed && this.validUpMove()) {
+		this.moveUp();
+	} else if (this.downPressed && this.validDownMove(space)){
+		this.moveDown();
+	}
+};
 
 module.exports = Game;
 
