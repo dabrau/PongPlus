@@ -63,6 +63,7 @@ function Ball(space) {
 	this.v = 5; //velocity
 	this.r = 5; //radius
 	this.collisionPadding = 6;
+	this.maxBounceAngleRadians = 1.22;
 }
 
 Ball.prototype.nextYposition = function() {
@@ -97,46 +98,81 @@ Ball.prototype.hitRpaddle = function(paddle) {
 	return this.nextXposition() - this.collisionPadding >= paddle.surface && this.withinPaddleBounds(paddle);
 };
 
-Ball.prototype.paddleCollision = function(paddle) {
-	var angleCoefficient = (this.y - paddle.yMid()) / (paddle.h / 2);
-	var maxAngleRadians = 1.22;
-	var collisionAngle = angleCoefficient * maxAngleRadians;
-	var dxNew = Math.cos(collisionAngle);
-	this.dy = Math.sin(collisionAngle)  * this.v;
-	if (this.dx > 0) {
-		this.dx = -dxNew * this.v;
+Ball.prototype.angleCoefficient = function(paddle) {
+	var coefficient = (this.y - paddle.yMid()) / (paddle.h / 2);
+	return coefficient;
+};
+
+Ball.prototype.collisionAngle = function(coefficient) {
+	var angle = coefficient * this.maxBounceAngleRadians;
+	return angle;
+};
+
+Ball.prototype.dxNew = function(collisionAngle, v) {
+	if (this.dx > 0)  {
+		this.dx = -Math.cos(collisionAngle) * this.v;
 	} else {
-		this.dx = dxNew * this.v;
+		this.dx = Math.cos(collisionAngle) * this.v
 	}
-},
+};
+
+Ball.prototype.dyNew = function(collisionAngle, v) {
+	this.dy = Math.sin(collisionAngle)  * this.v;
+};
+
+Ball.prototype.paddleBounceDxDy = function(v, collisionAngle) {
+	this.dxNew(collisionAngle, v);
+	this.dyNew(collisionAngle, v);
+}
+
+// Ball.prototype.paddleCollision = function(paddle) {
+// 	var angleCoefficient = (this.y - paddle.yMid()) / (paddle.h / 2);
+// 	var maxAngleRadians = 1.22;
+// 	var collisionAngle = angleCoefficient * maxAngleRadians;
+// 	var dxNew = Math.cos(collisionAngle);
+// 	this.dy = Math.sin(collisionAngle)  * this.v;
+// 	if (this.dx > 0) {
+// 		this.dx = -dxNew * this.v;
+// 	} else {
+// 		this.dx = dxNew * this.v;
+// 	}
+// };
+
+Ball.prototype.paddleCollision = function(paddle, v) {
+	this.paddleBounceDxDy(v, 
+		this.collisionAngle(
+			this.angleCoefficient(paddle)
+		)
+	)
+};
 
 Ball.prototype.move = function() {
 	this.x += this.dx;
 	this.y += this.dy;
-},
+};
 
 Ball.prototype.out = function(gameSpace) {
 	return this.x < 0 || this.x > gameSpace.width;
-},
+};
 
 Ball.prototype.directionChange = function(space, paddleL, paddleR) {
 	if (this.hitTopWall() || this.hitBottomWall(space)) {
 		this.wallCollision();
 	} else if (this.hitLpaddle(paddleL)) {
-		this.paddleCollision(paddleL);
+		this.paddleCollision(paddleL, this.v);
 	} else if (this.hitRpaddle(paddleR)) {
-		this.paddleCollision(paddleR);
+		this.paddleCollision(paddleR, this.v);
 	}
 };
 
 
 function Paddle(gameSpace, h, w, x, sens, shortenLength) {
 	this.yTop = gameSpace.height / 2 - h / 2 ; //start the paddle in the middle of the game space
-	this.h = h;
+	this.h = h; //length of paddle
 	this.shortenLength = shortenLength //number of pixels to shorten the paddle
-	this.w = w;
-	this.x = x;
-	this.surface = undefined;
+	this.w = w; //width of paddle
+	this.x = x; //x value at top left corner of the paddle 
+	this.surface = undefined; // the side of the paddle where the ball should bounce
 	this.sens = sens; //number of pixels moved per frame
 	this.upPressed = false;
 	this.downPressed = false;
