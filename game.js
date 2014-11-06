@@ -81,12 +81,16 @@ Ball.prototype.wallCollision = function() {
 	this.dy = -this.dy;
 };
 
+Ball.prototype.withinPaddleBounds = function(paddle) {
+	return this.y >= paddle.yTop && this.y <= paddle.yBottom();
+}
+
 Ball.prototype.hitLpaddle = function(paddleL) {
-	return this.x + this.collisionPadding + this.dx <= paddleL.surface && this.y >= paddleL.yTop && this.y <= paddleL.yBottom();;
+	return this.x + this.collisionPadding + this.dx <= paddleL.surface && this.withinPaddleBounds(paddleL);
 };
 
 Ball.prototype.hitRpaddle = function(paddleR) {
-	return this.x - this.collisionPadding + this.dx >= paddleR.surface && this.y >= paddleR.yTop && this.y <= paddleR.yBottom();
+	return this.x - this.collisionPadding + this.dx >= paddleR.surface && this.withinPaddleBounds(paddleR);
 };
 
 Ball.prototype.paddleCollision = function(paddle) {
