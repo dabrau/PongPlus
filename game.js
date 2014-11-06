@@ -11,10 +11,10 @@ function Game(gameInstance) {
 
 	this.ball = new Ball(this.space);
 
-	this.paddleL = new Paddle(this.space, 75, 10, 0, 3, 5);
+	this.paddleL = new Paddle(this.space, 75, 10, 0, 5, 5);
 	this.paddleL.surface = 10; //paddle width
 
-	this.paddleR = new Paddle(this.space, 75, 10, this.space.width - 10, 3, 5);
+	this.paddleR = new Paddle(this.space, 75, 10, this.space.width - 10, 5, 5);
 	this.paddleR.surface = 440; //space width - paddle width
 }
 
@@ -58,9 +58,9 @@ function Ball(space) {
 	//initial ball properties
 	this.x =  space.width / 4;
 	this.y =  space.height / 2;
-	this.dx = 7;
+	this.dx = 5;
 	this.dy = 0;
-	this.v = 7; //velocity
+	this.v = 5; //velocity
 	this.r = 5; //radius
 	this.collisionPadding = 6;
 }
@@ -70,11 +70,11 @@ Ball.prototype.nextYposition = function() {
 };
 
 Ball.prototype.hitTopWall = function() {
-	return this.nextYposition() - this.collisionPadding < 0;
+	return this.y - this.collisionPadding < 0;
 };
 
 Ball.prototype.hitBottomWall = function(gameSpace) {
-	return this.nextYposition() + this.collisionPadding > gameSpace.height;
+	return this.y + this.collisionPadding > gameSpace.height;
 };
 
 Ball.prototype.wallCollision = function() {
@@ -120,9 +120,7 @@ Ball.prototype.out = function(gameSpace) {
 },
 
 Ball.prototype.directionChange = function(space, paddleL, paddleR) {
-	if (this.hitTopWall()) {
-		this.wallCollision();
-	} else if (this.hitBottomWall(space)) {
+	if (this.hitTopWall() || this.hitBottomWall(space)) {
 		this.wallCollision();
 	} else if (this.hitLpaddle(paddleL)) {
 		this.paddleCollision(paddleL);
@@ -184,5 +182,4 @@ Paddle.prototype.reposition = function() {
 
 
 module.exports = Game;
-
 

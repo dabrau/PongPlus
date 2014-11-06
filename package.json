@@ -4,6 +4,7 @@
   "description": "getting multiplayer",
   "dependencies": {
     "express": "^4.10.0",
+    "node-inspector": "^0.7.4",
     "query-string": "^1.0.0",
     "request": "^2.46.0",
     "socket.io": "^1.1.0",
