@@ -85,12 +85,16 @@ Ball.prototype.withinPaddleBounds = function(paddle) {
 	return this.y >= paddle.yTop && this.y <= paddle.yBottom();
 }
 
-Ball.prototype.hitLpaddle = function(paddleL) {
-	return this.x + this.collisionPadding + this.dx <= paddleL.surface && this.withinPaddleBounds(paddleL);
+Ball.prototype.nextXposition = function() {
+	return this.x + this.dx;
+}
+
+Ball.prototype.hitLpaddle = function(paddle) {
+	return this.nextXposition() + this.collisionPadding <= paddle.surface && this.withinPaddleBounds(paddle);
 };
 
-Ball.prototype.hitRpaddle = function(paddleR) {
-	return this.x - this.collisionPadding + this.dx >= paddleR.surface && this.withinPaddleBounds(paddleR);
+Ball.prototype.hitRpaddle = function(paddle) {
+	return this.nextXposition() - this.collisionPadding >= paddle.surface && this.withinPaddleBounds(paddle);
 };
 
 Ball.prototype.paddleCollision = function(paddle) {
