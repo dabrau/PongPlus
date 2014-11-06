@@ -46,7 +46,7 @@ Game.prototype.pong = function() {
 		this.paddleL.moveDown();
 	} 
 
-	this.plusFeature(5);
+	this.plusFeature();
 
 	this.ball.directionChange(this.space, this.paddleL, this.paddleR);
 
