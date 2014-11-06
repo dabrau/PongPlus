@@ -11,16 +11,27 @@ function Game(gameInstance) {
 
 	this.ball = new Ball(this.space);
 
-	this.paddleL = new Paddle(this.space, 75, 10, 0, 3);
+	this.paddleL = new Paddle(this.space, 75, 10, 0, 3, 5);
 	this.paddleL.surface = 10; //paddle width
 
-	this.paddleR = new Paddle(this.space, 75, 10, this.space.width - 10, 3);
+	this.paddleR = new Paddle(this.space, 75, 10, this.space.width - 10, 3, 5);
 	this.paddleR.surface = 440; //space width - paddle width
 }
 
 Game.prototype.state = function() {
-	return {'x': this.ball.x, 'y': this.ball.y, 'l': this.paddleL.yTop, 'r': this.paddleR.yTop}
+	return {'x': this.ball.x, 'y': this.ball.y, 'l': this.paddleL.yTop, 'lh': this.paddleL.h, 'r': this.paddleR.yTop, 'rh': this.paddleR.h}
 };
+
+//shorten paddle when ball collides and reposition
+Game.prototype.plusFeature = function() {
+ 	if (this.ball.hitRpaddle(this.paddleR)) {
+ 		this.paddleR.shortenHeight();
+ 		this.paddleR.reposition();
+ 	} else if (this.ball.hitLpaddle(this.paddleL)) {
+ 		this.paddleL.shortenHeight();
+ 		this.paddleL.reposition();
+ 	}
+}
 
 Game.prototype.pong = function() {
 	if (this.paddleR.upPressed && this.paddleR.validUpMove()) {
@@ -34,6 +45,8 @@ Game.prototype.pong = function() {
 	} else if (this.paddleL.downPressed && this.paddleL.validDownMove(this.space)){
 		this.paddleL.moveDown();
 	} 
+
+	this.plusFeature(5);
 
 	this.ball.directionChange(this.space, this.paddleL, this.paddleR);
 
@@ -111,9 +124,10 @@ Ball.prototype.directionChange = function(space, paddleL, paddleR) {
 };
 
 
-function Paddle(gameSpace, h, w, x, sens) {
-	this.yTop = gameSpace.height / 2 - h / 2 ;
+function Paddle(gameSpace, h, w, x, sens, shortenLength) {
+	this.yTop = gameSpace.height / 2 - h / 2 ; //start the paddle in the middle of the game space
 	this.h = h;
+	this.shortenLength = shortenLength //number of pixels to shorten the paddle
 	this.w = w;
 	this.x = x;
 	this.surface = undefined;
@@ -144,6 +158,21 @@ Paddle.prototype.validUpMove = function() {
 Paddle.prototype.validDownMove = function(gameSpace) {
 	return this.yBottom() <= gameSpace.height;
 }
+
+//shorten the paddle 
+Paddle.prototype.shortenHeight = function() {
+	if (this.h - this.shortenLength < 1) {
+		this.h = 1;
+	} else {
+		this.h -= this.shortenLength;
+	}
+}
+
+Paddle.prototype.reposition = function() {
+	this.yTop += this.shortenLength / 2; //reposition the paddle when it gets shorter
+}
+
+
 
 
 module.exports = Game;

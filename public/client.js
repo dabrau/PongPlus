@@ -5,11 +5,11 @@ var draw = {};
 
 	draw.ctx = document.getElementById('canvas').getContext("2d");
 
-	draw.game = function(x, y, l, r) {
+	draw.game = function(x, y, l, lh, r, rh) {
 		this.clear();
 		this.ball(x, y);
-		this.lPaddle(l);
-		this.rPaddle(r);
+		this.lPaddle(l, lh);
+		this.rPaddle(r, rh);
 	};
 
 	draw.clear = function() {
@@ -23,12 +23,12 @@ var draw = {};
 	  this.ctx.fill();
 	};
 
-	draw.lPaddle = function(y) {
-		this.ctx.fillRect(0, y, 10, 75);
+	draw.lPaddle = function(y, h) {
+		this.ctx.fillRect(0, y, 10, h);
 	}
 
-	draw.rPaddle = function(y) {
-		this.ctx.fillRect(440, y, 10, 75);
+	draw.rPaddle = function(y, h) {
+		this.ctx.fillRect(440, y, 10, h);
 	}
 
 var userid = undefined;
@@ -52,7 +52,8 @@ socket.on('player', function(data) {
 
 
 socket.on('gameState', function(data) {
-	draw.game(data.x, data.y, data.l, data.r);
+	console.log(data);
+	draw.game(data.x, data.y, data.l, data.lh, data.r, data.rh);
 });
 
 $('.initiate').hide();

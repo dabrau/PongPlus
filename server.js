@@ -34,6 +34,7 @@ io.on('connection', function (socket) {
 		var gameInterval = setInterval(function() {
 			currentGame.pong();
 			io.emit('gameState', currentGame.state());
+			console.log(currentGame.state());
 			if (currentGame.ball.out(currentGame.space)) {
 				currentGame = new game();
 				clearInterval(gameInterval);
