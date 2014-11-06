@@ -12,10 +12,10 @@ function Game(gameInstance) {
 	this.ball = new Ball(this.space);
 
 	this.paddleL = new Paddle(this.space, 75, 10, 0, 5, 5);
-	this.paddleL.surface = 10; //paddle width
+	this.paddleL.surface = this.paddleL.w; //paddle width
 
 	this.paddleR = new Paddle(this.space, 75, 10, this.space.width - 10, 5, 5);
-	this.paddleR.surface = 440; //space width - paddle width
+	this.paddleR.surface = this.space.width - this.paddleR.w; //space width - paddle width
 };
 
 Game.prototype.state = function() {
