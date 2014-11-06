@@ -41,11 +41,6 @@ io.on('connection', function (socket) {
 		}, 16);
 	});
 
-	
-	// setInterval(function() {
-	// 	socket.emit('gameState', currentGame.state());
-	// }, 16);
-
 	socket.on('move', function (data) {
 		if (data.key === 38 && data.id === currentGame.player.left) {
 			currentGame.paddleL.upPressed = true;

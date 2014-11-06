@@ -1,8 +1,4 @@
 function Game(gameInstance) {
-	this.gameID = gameInstance;
-
-	this.gameInterval = undefined;
-
 	this.space = {
 		width: 450,
 		height: 300
@@ -121,7 +117,7 @@ function Paddle(gameSpace, h, w, x, sens) {
 	this.w = w;
 	this.x = x;
 	this.surface = undefined;
-	this.sens = sens;
+	this.sens = sens; //number of pixels moved per frame
 	this.upPressed = false;
 	this.downPressed = false;
 }
