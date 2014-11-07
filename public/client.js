@@ -53,14 +53,12 @@ var Game = {};
 		}
 	};
 
-$('.initiate').hide();
 
 var userid = undefined;
 
 var socket = io.connect();
 
 socket.on('onconnected', function(data) {
-	console.log(data);
 	userid = data.id;
 	Game.initializeSpace(
 		data.height, 
@@ -71,19 +69,14 @@ socket.on('onconnected', function(data) {
 		data.paddleRPos, 
 		data.paddleRWidth
 	);
-	console.log(Game.ball);
 });
 
 socket.on('player', function(data) {
 	if (userid === data.id && data.p === 'L') {
-		$('.left').show();
-		$('.controls').show();
 	} else if (userid === data.id && data.p === 'R') {
-		$('.right').show();
-		$('.controls').show();
 		$('.start').show();
 	}
-})
+});
 
 
 socket.on('gameState', function(data) {
@@ -95,7 +88,7 @@ $('.initiate').hide();
 
 
 $('.start').on('click', function () {
-	socket.emit('start');
+	socket.emit('start', {id: userid});
 	$(this).hide();
 });
 

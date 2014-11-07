@@ -12,6 +12,28 @@ app.use(express.static(__dirname + '/public'));
 
 var currentGame = new game();
 
+var gameQue = [];
+
+var placePlayer = function(game) {
+	game.player.right = gameQue.shift();
+};
+
+var keepWinner = function(game) {
+	if (game.ball.x < 0) {
+		return game.player.right;
+	} else {
+		return game.player.left;
+	}
+};
+
+var placeLoserInQue = function(game) {
+	if (game.ball.x < 0) {
+		gameQue.push(game.player.left);
+	} else {
+		gameQue.push(game.player.right);
+	}
+}
+
 io.on('connection', function (socket) {
 
 	socket.userid = UUID();
@@ -33,22 +55,27 @@ io.on('connection', function (socket) {
 	} else if (currentGame.player.right === undefined) {
 		currentGame.player.right = socket.userid;
 		socket.emit('player', {id: currentGame.player.right, p: 'R'});
+	} else {
+		gameQue.push(socket.userid);
 	}
 
-	console.log(currentGame.player.left)
-	console.log(currentGame.player.right)
-
-		
-	socket.on('start', function() {
-		var gameInterval = setInterval(function() {
-			currentGame.pong();
-			io.emit('gameState', currentGame.state());
-			console.log(currentGame.state());
-			if (currentGame.ball.out(currentGame.space)) {
-				currentGame = new game();
-				clearInterval(gameInterval);
-			}
-		}, 16);
+	socket.on('start', function(data) {
+		if (data.id === currentGame.player.right) {
+			var gameInterval = setInterval(function() {
+				currentGame.pong();
+				io.emit('gameState', currentGame.state());
+				// console.log(currentGame.state());
+				if (currentGame.ball.out(currentGame.space)) {
+					var winner = keepWinner(currentGame);
+					placeLoserInQue(currentGame);
+					currentGame = new game();
+					currentGame.player.left = winner;
+					placePlayer(currentGame);
+					io.emit('player', {id: currentGame.player.right, p: 'R'});
+					clearInterval(gameInterval);
+				}
+			}, 16);
+		}
 	});
 
 	socket.on('move', function (data) {
