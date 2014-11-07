@@ -2,7 +2,6 @@
 
 $('.initiate').hide();
 var draw = {};
-
 	draw.ctx = document.getElementById('canvas').getContext("2d");
 
 	draw.game = function(x, y, l, lh, r, rh) {
@@ -16,7 +15,7 @@ var draw = {};
 		this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 	};
 
-	draw.ball = function(x,y) {
+	draw.ball = function(x, y) {
 		this.ctx.beginPath();
 	  this.ctx.arc(x, y, 5, 0,Math.PI*2,true); 
 	  this.ctx.closePath();
@@ -30,6 +29,29 @@ var draw = {};
 	draw.rPaddle = function(y, h) {
 		this.ctx.fillRect(440, y, 10, h);
 	}
+
+var Game = {};
+
+	Game.space = {
+		width = undefined,
+		height = undefined
+	}
+
+	Game.ball = {
+		x: undefined,
+		y: undefined
+	}
+
+ 	Game.paddleL = {
+		position: undefined,
+		height: undefined
+	}
+
+	Game.paddleR = {
+		position: undefined,
+		height: undefined
+	}
+
 
 var userid = undefined;
 
