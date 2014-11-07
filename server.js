@@ -10,13 +10,23 @@ var game = require('./game.js')
 
 app.use(express.static(__dirname + '/public'));
 
-var currentGame = new game(123);
+var currentGame = new game();
 
 io.on('connection', function (socket) {
-	
+
 	socket.userid = UUID();
 	
-	socket.emit('onconnected', {id: socket.userid});
+	socket.emit('onconnected', {
+		id: socket.userid,
+		height: currentGame.space.height,
+		width: currentGame.space.width,
+		paddleLPos: currentGame.paddleL.x,
+		paddleRPos: currentGame.paddleR.x,
+		paddleLWidth: currentGame.paddleL.w,
+		paddleRWidth: currentGame.paddleR.w,
+		radius: currentGame.ball.r
+	});
+
 	if (currentGame.player.left === undefined) {
 		currentGame.player.left = socket.userid;
 		socket.emit('player', {id: currentGame.player.left, p: 'L'});
@@ -29,7 +39,6 @@ io.on('connection', function (socket) {
 	console.log(currentGame.player.right)
 
 		
-
 	socket.on('start', function() {
 		var gameInterval = setInterval(function() {
 			currentGame.pong();

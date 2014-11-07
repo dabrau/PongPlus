@@ -1,64 +1,77 @@
-
-
-$('.initiate').hide();
-var draw = {};
-	draw.ctx = document.getElementById('canvas').getContext("2d");
-
-	draw.game = function(x, y, l, lh, r, rh) {
-		this.clear();
-		this.ball(x, y);
-		this.lPaddle(l, lh);
-		this.rPaddle(r, rh);
-	};
-
-	draw.clear = function() {
-		this.ctx.clearRect(0, 0, canvas.width, canvas.height);
-	};
-
-	draw.ball = function(x, y) {
-		this.ctx.beginPath();
-	  this.ctx.arc(x, y, 5, 0,Math.PI*2,true); 
-	  this.ctx.closePath();
-	  this.ctx.fill();
-	};
-
-	draw.lPaddle = function(y, h) {
-		this.ctx.fillRect(0, y, 10, h);
-	}
-
-	draw.rPaddle = function(y, h) {
-		this.ctx.fillRect(440, y, 10, h);
-	}
-
 var Game = {};
+	Game.canvas = document.getElementById('canvas');
+	Game.ctx = document.getElementById('canvas').getContext("2d");
+	Game.initializeSpace = function(h, w, r, lp, lw, rp, rw) {
+			this.canvas.height = h;
+			this.canvas.width = w;
+			this.ball.radius = r;
+			this.LeftPaddle.position = lp;
+			this.RightPaddle.position = rp;
+			this.LeftPaddle.width = lw;
+			this.RightPaddle.width = rw;
+	};
 
 	Game.space = {
-		width = undefined,
-		height = undefined
-	}
+		clear: function() {
+			Game.ctx.clearRect(0, 0, Game.canvas.width, Game.canvas.height);
+		},
+
+		draw: function(x, y, l, lh, r, rh) {
+			this.clear();
+			Game.ball.draw(x, y, Game.ctx);
+			Game.LeftPaddle.draw(l, lh, Game.ctx);
+			Game.RightPaddle.draw(r, rh, Game.ctx);
+		} 
+	};
 
 	Game.ball = {
-		x: undefined,
-		y: undefined
-	}
+		radius: undefined,
 
- 	Game.paddleL = {
-		position: undefined,
-		height: undefined
-	}
+		draw: function(x, y, ctx) {
+			ctx.beginPath();
+	  	ctx.arc(x, y, this.radius, 0,Math.PI*2,true); 
+	  	ctx.closePath();
+	  	ctx.fill();
+		}
+	};
 
-	Game.paddleR = {
-		position: undefined,
-		height: undefined
-	}
+	Game.LeftPaddle = {
+		position: undefined, 
+		width: undefined,
 
+		draw: function(y, h, ctx) {
+			ctx.fillRect(this.position, y, this.width, h);
+		}
+	};
+
+	Game.RightPaddle = {
+		position: undefined, 
+		width: undefined,
+
+		draw: function(y, h, ctx) {
+			ctx.fillRect(this.position, y, this.width, h);
+		}
+	};
+
+$('.initiate').hide();
 
 var userid = undefined;
 
 var socket = io.connect();
 
 socket.on('onconnected', function(data) {
+	console.log(data);
 	userid = data.id;
+	Game.initializeSpace(
+		data.height, 
+		data.width, 
+		data.radius, 
+		data.paddleLPos,
+		data.paddleLWidth,
+		data.paddleRPos, 
+		data.paddleRWidth
+	);
+	console.log(Game.ball);
 });
 
 socket.on('player', function(data) {
@@ -75,7 +88,7 @@ socket.on('player', function(data) {
 
 socket.on('gameState', function(data) {
 	console.log(data);
-	draw.game(data.x, data.y, data.l, data.lh, data.r, data.rh);
+	Game.space.draw(data.x, data.y, data.l, data.lh, data.r, data.rh);
 });
 
 $('.initiate').hide();
@@ -86,10 +99,10 @@ $('.start').on('click', function () {
 	$(this).hide();
 });
 
-	$(document).on('keydown', function(e) {
-		socket.emit('move', {key: e.keyCode, id: userid})
-	});
+$(document).on('keydown', function(e) {
+	socket.emit('move', {key: e.keyCode, id: userid})
+});
 
-	$(document).on('keyup', function(e) {
-		socket.emit('stop', {key: e.keyCode, id: userid})
-	});
+$(document).on('keyup', function(e) {
+	socket.emit('stop', {key: e.keyCode, id: userid})
+});
