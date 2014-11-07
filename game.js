@@ -44,8 +44,8 @@ Game.prototype.pong = function() {
 
 function Ball(space) {
 	//initial ball properties
-	this.x =  space.width / 4;
-	this.y =  space.height / 2;
+	this.x =  parseInt(space.width / 4);
+	this.y =  parseInt(space.height / 2);
 	this.dx = 5;
 	this.dy = 0;
 	this.v = 5; //velocity
@@ -98,14 +98,14 @@ Ball.prototype.collisionAngle = function(coefficient) {
 
 Ball.prototype.dxNew = function(collisionAngle, v) {
 	if (this.dx > 0)  {
-		this.dx = -Math.cos(collisionAngle) * v;
+		this.dx = parseInt(-Math.cos(collisionAngle) * v);
 	} else {
-		this.dx = Math.cos(collisionAngle) * v
+		this.dx = parseInt(Math.cos(collisionAngle) * v);
 	}
 };
 
 Ball.prototype.dyNew = function(collisionAngle, v) {
-	this.dy = Math.sin(collisionAngle)  * v;
+	this.dy = parseInt(Math.sin(collisionAngle)  * v);
 };
 
 Ball.prototype.paddleBounceDxDy = function(v, collisionAngle) {
