@@ -1,4 +1,4 @@
-function Game(gameInstance) {
+function Game() {
 	this.space = {
 		width: 450,
 		height: 300

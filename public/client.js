@@ -73,12 +73,12 @@ socket.on('onconnected', function(data) {
 
 socket.on('player', function(data) {
 	if (userid === data.id && data.p === 'L') {
-		$('.status').text("You are Left Paddle! \n waiting on right paddle to start")
+		$('.status').text("You are Left Paddle!")
 	} else if (userid === data.id && data.p === 'R') {
 		$('.status').text('You are Right Paddle!')
 		$('.start').show();
 	} else if (userid === data.id) {
-		$('.status').text(data.position + ' are ahead of you!')
+		$('.status').text(data.position + ' waiting ahead of you!')
 	}
 });
 
@@ -88,7 +88,7 @@ socket.on('gameState', function(data) {
 	Game.space.draw(data.x, data.y, data.l, data.lh, data.r, data.rh);
 });
 
-$('.initiate').hide();
+$('.start').hide();
 
 
 $('.start').on('click', function () {

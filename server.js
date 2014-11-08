@@ -7,11 +7,10 @@ var server          = app.listen(3000);
 var io              = require('socket.io')(server);
 
 var game = require('./game.js')
-
 app.use(express.static(__dirname + '/public'));
 
 var currentGame = new game();
-
+var gameInterval = undefined;
 var gameQueue = [];
 
 var placePlayer = function(game) {
@@ -62,16 +61,23 @@ io.on('connection', function (socket) {
 
 	socket.on('start', function(data) {
 		if (data.id === currentGame.player.right) {
-			var gameInterval = setInterval(function() {
+			gameInterval = setInterval(function() {
 				currentGame.pong();
 				io.emit('gameState', currentGame.state());
 				if (currentGame.ball.out(currentGame.space)) {
 					var winner = keepWinner(currentGame);
 					placeLoserInQueue(currentGame);
 					currentGame = new game();
-					currentGame.player.left = winner;
 					placePlayer(currentGame);
+					currentGame.player.left = winner;
+
+					for (var i = 0; i < gameQueue.length; i++) {
+						io.emit('player', {id: gameQueue[i], position: i});
+					}
+					
+					
 					io.emit('player', {id: currentGame.player.right, p: 'R'});
+					io.emit('player', {id: currentGame.player.left, p: 'L'});
 					clearInterval(gameInterval);
 				}
 			}, 16);
@@ -79,8 +85,37 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('disconnect', function() {
-		var i = gameQueue.indexOf(socket.userid);
-		gameQueue.splice(i, 1);
+		if (this.userid === currentGame.player.left) {
+			clearInterval(gameInterval);
+			var holder = currentGame.player.right;
+			currentGame = new game();
+			currentGame.player.left = holder;
+			placePlayer(currentGame);
+
+			io.emit('player', {id: currentGame.player.right, p: 'R'})
+			io.emit('player', {id: currentGame.player.left, p: 'L'});
+			for (var i = 0; i < gameQueue.length; i++) {
+				io.emit('player', {id: gameQueue[i], position: i});
+			}
+
+		} else if (this.userid === currentGame.player.right) {
+			clearInterval(gameInterval);
+			var holder = currentGame.player.left;
+			currentGame = new game();
+			currentGame.player.left = holder;
+			placePlayer(currentGame);
+
+			io.emit('player', {id: currentGame.player.right, p: 'R'})
+			for (var i = 0; i < gameQueue.length; i++) {
+				io.emit('player', {id: gameQueue[i], position: i});
+			}
+		} else {
+			var i = gameQueue.indexOf(this.userid);
+			gameQueue.splice(i, 1);
+			for (var i = 0; i < gameQueue.length; i++) {
+				io.emit('player', {id: gameQueue[i], position: i});
+			}
+		}		
 	})
 
 	socket.on('move', function (data) {
@@ -113,9 +148,3 @@ io.on('connection', function (socket) {
 		}
 	});
 });
-
-
-
-
-
-
