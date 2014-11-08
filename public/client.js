@@ -73,8 +73,12 @@ socket.on('onconnected', function(data) {
 
 socket.on('player', function(data) {
 	if (userid === data.id && data.p === 'L') {
+		$('.status').text("You are Left Paddle! \n waiting on right paddle to start")
 	} else if (userid === data.id && data.p === 'R') {
+		$('.status').text('You are Right Paddle!')
 		$('.start').show();
+	} else if (userid === data.id) {
+		$('.status').text(data.position + ' are ahead of you!')
 	}
 });
 

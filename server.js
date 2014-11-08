@@ -12,10 +12,10 @@ app.use(express.static(__dirname + '/public'));
 
 var currentGame = new game();
 
-var gameQue = [];
+var gameQueue = [];
 
 var placePlayer = function(game) {
-	game.player.right = gameQue.shift();
+	game.player.right = gameQueue.shift();
 };
 
 var keepWinner = function(game) {
@@ -26,11 +26,11 @@ var keepWinner = function(game) {
 	}
 };
 
-var placeLoserInQue = function(game) {
+var placeLoserInQueue = function(game) {
 	if (game.ball.x < 0) {
-		gameQue.push(game.player.left);
+		gameQueue.push(game.player.left);
 	} else {
-		gameQue.push(game.player.right);
+		gameQueue.push(game.player.right);
 	}
 }
 
@@ -56,7 +56,8 @@ io.on('connection', function (socket) {
 		currentGame.player.right = socket.userid;
 		socket.emit('player', {id: currentGame.player.right, p: 'R'});
 	} else {
-		gameQue.push(socket.userid);
+		gameQueue.push(socket.userid);
+		socket.emit('player', {id: socket.userid, position: gameQueue.indexOf(socket.userid)});
 	}
 
 	socket.on('start', function(data) {
@@ -66,7 +67,7 @@ io.on('connection', function (socket) {
 				io.emit('gameState', currentGame.state());
 				if (currentGame.ball.out(currentGame.space)) {
 					var winner = keepWinner(currentGame);
-					placeLoserInQue(currentGame);
+					placeLoserInQueue(currentGame);
 					currentGame = new game();
 					currentGame.player.left = winner;
 					placePlayer(currentGame);
@@ -78,8 +79,8 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('disconnect', function() {
-		var i = gameQue.indexOf(socket.userid);
-		gameQue.splice(i, 1);
+		var i = gameQueue.indexOf(socket.userid);
+		gameQueue.splice(i, 1);
 	})
 
 	socket.on('move', function (data) {
@@ -112,4 +113,9 @@ io.on('connection', function (socket) {
 		}
 	});
 });
+
+
+
+
+
 
