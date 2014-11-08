@@ -64,7 +64,6 @@ io.on('connection', function (socket) {
 			var gameInterval = setInterval(function() {
 				currentGame.pong();
 				io.emit('gameState', currentGame.state());
-				// console.log(currentGame.state());
 				if (currentGame.ball.out(currentGame.space)) {
 					var winner = keepWinner(currentGame);
 					placeLoserInQue(currentGame);
@@ -77,6 +76,11 @@ io.on('connection', function (socket) {
 			}, 16);
 		}
 	});
+
+	socket.on('disconnect', function() {
+		var i = gameQue.indexOf(socket.userid);
+		gameQue.splice(i, 1);
+	})
 
 	socket.on('move', function (data) {
 		if (data.key === 38 && data.id === currentGame.player.left) {
@@ -108,5 +112,4 @@ io.on('connection', function (socket) {
 		}
 	});
 });
-
 
