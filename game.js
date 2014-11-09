@@ -19,7 +19,26 @@ function Game() {
 };
 
 Game.prototype.state = function() {
-	return {'x': this.ball.x, 'y': this.ball.y, 'l': this.paddleL.yTop, 'lh': this.paddleL.h, 'r': this.paddleR.yTop, 'rh': this.paddleR.h}
+	return {
+		x: this.ball.x, 
+		y: this.ball.y, 
+		l: this.paddleL.yTop, 
+		lh: this.paddleL.h, 
+		r: this.paddleR.yTop, 
+		rh: this.paddleR.h
+	}
+};
+
+Game.prototype.constants = function() {
+	return {
+		height: this.space.height,
+		width: this.space.width,
+		paddleLPos: this.paddleL.x,
+		paddleRPos: this.paddleR.x,
+		paddleLWidth: this.paddleL.w,
+		paddleRWidth: this.paddleR.w,
+		radius: this.ball.r
+	}
 };
 
 //shorten paddle and reposition when ball collides

@@ -34,20 +34,16 @@ var placeLoserInQueue = function(game) {
 }
 
 io.on('connection', function (socket) {
-
+	console.log(socket.id)
 	socket.userid = UUID();
 	
-	socket.emit('onconnected', {
-		id: socket.userid,
-		height: currentGame.space.height,
-		width: currentGame.space.width,
-		paddleLPos: currentGame.paddleL.x,
-		paddleRPos: currentGame.paddleR.x,
-		paddleLWidth: currentGame.paddleL.w,
-		paddleRWidth: currentGame.paddleR.w,
-		radius: currentGame.ball.r
-	});
+	socket.emit('onconnected', function() {
+		data = currentGame.constants();
+		data.id = socket.userid;
+		return data
+	}());
 
+	
 	if (currentGame.player.left === undefined) {
 		currentGame.player.left = socket.userid;
 		socket.emit('player', {id: currentGame.player.left, p: 'L'});
