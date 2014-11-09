@@ -1,4 +1,7 @@
 function Game() {
+	this.inProgress = false;
+	this.gameInterval = undefined;
+
 	this.space = {
 		width: 450,
 		height: 300
@@ -41,6 +44,20 @@ Game.prototype.constants = function() {
 	}
 };
 
+Game.prototype.stopGame = function(callback) {
+	this.inProgress = false
+	clearInterval(this.gameInterval);
+	callback();
+}
+
+Game.prototype.winner = function() {
+	if (this.ball.x < 0) {
+		return this.player.right;
+	} else if (this.ball.x > this.space.width) {
+		return this.player.left;
+	}
+};
+
 //shorten paddle and reposition when ball collides
 Game.prototype.plusFeature = function(ball, paddleR, paddleL) {
  	if (ball.hitRpaddle(paddleR)) {
@@ -53,13 +70,26 @@ Game.prototype.plusFeature = function(ball, paddleR, paddleL) {
  	}
 };
 
-Game.prototype.pong = function() {
+Game.prototype.pong = function(callback) {
 	this.paddleR.move(this.space)
 	this.paddleL.move(this.space)
 	this.plusFeature(this.ball, this.paddleR, this.paddleL);
 	this.ball.directionChange(this.space, this.paddleL, this.paddleR);
 	this.ball.move();
+	if (this.ball.out(this.space)) {
+			this.stopGame(callback)
+	}
 };
+
+Game.prototype.start = function(callback) {
+	if (!this.inProgress) {
+		this.inProgress = true;
+		var that = this
+		this.gameInterval = setInterval(function() {
+			that.pong(callback);
+		}, 16);
+	}
+}
 
 function Ball(space) {
 	//initial ball properties
@@ -146,7 +176,7 @@ Ball.prototype.move = function() {
 };
 
 Ball.prototype.out = function(gameSpace) {
-	return this.x < 0 || this.x > gameSpace.width;
+	return (this.x < 0 || this.x > gameSpace.width)
 };
 
 Ball.prototype.directionChange = function(space, paddleL, paddleR) {
