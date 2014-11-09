@@ -71,14 +71,17 @@ socket.on('onconnected', function(data) {
 	);
 });
 
-socket.on('player', function(data) {
-	if (userid === data.id && data.p === 'L') {
+socket.on('status', function(data) {
+	console.log(data.id);
+	if (userid === data.id && data.status === 'left') {
 		$('.status').text("You are Left Paddle!")
-	} else if (userid === data.id && data.p === 'R') {
+		console.log(data.id)
+	} else if (userid === data.id && data.status === 'right') {
 		$('.status').text('You are Right Paddle!')
 		$('.start').show();
+		console.log(data.id)
 	} else if (userid === data.id) {
-		$('.status').text(data.position + ' waiting ahead of you!')
+		$('.status').text(data.status + ' waiting ahead of you!')
 	}
 });
 

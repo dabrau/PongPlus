@@ -14,58 +14,56 @@ var currentGame = new game();
 var emitInterval = undefined;
 var gameQueue = [];
 
-var placePlayer = function(game) {
-	game.player.right = gameQueue.shift();
+var setLeftPlayer = function(game, socket) {
+	game.player.left = socket.userid;
+	socket.emit('status', {id: game.player.left, status: 'left'});
 };
 
-var keepWinner = function(game) {
-	if (game.ball.x < 0) {
-		return game.player.right;
-	} else {
-		return game.player.left;
-	}
+var setRightPlayer = function(game, socket) {
+	game.player.right = socket.userid;
+	socket.emit('status', {id: game.player.right, status: 'right'});
 };
 
-var placeLoserInQueue = function(game) {
-	if (game.ball.x < 0) {
-		gameQueue.push(game.player.left);
-	} else {
-		gameQueue.push(game.player.right);
-	}
+var setInQueue = function(queue, socket) {
+	queue.push(socket.id)
+	socket.emit('player', {id: socket.userid, position: gameQueue.indexOf(socket.userid)});
 }
+
+var setPlayer = function(game, socket, queue) {
+	if (!game.player.left) {
+		setLeftPlayer(game, socket);
+	} else if (!game.right) {
+		setRightPlayer(currentGame, socket);
+	} else {
+		setInQueue(queue, socket);
+	} 
+};
+
 
 io.on('connection', function (socket) {
 
 	socket.userid = UUID();
-	
+
 	socket.emit('onconnected', function() {
 		data = currentGame.constants();
 		data.id = socket.userid;
 		return data
 	}());
 
-	
-	if (currentGame.player.left === undefined) {
-		currentGame.player.left = socket.userid;
-		socket.emit('player', {id: currentGame.player.left, p: 'L'});
-	} else if (currentGame.player.right === undefined) {
-		currentGame.player.right = socket.userid;
-		socket.emit('player', {id: currentGame.player.right, p: 'R'});
-	} else {
-		gameQueue.push(socket.userid);
-		socket.emit('player', {id: socket.userid, position: gameQueue.indexOf(socket.userid)});
-	}
+	setPlayer(currentGame, socket, gameQueue);
+
 
 	socket.on('start', function(data) {
 		if (data.id === currentGame.player.right) {
-			currentGame.start(function() {
+			currentGame.start(function(results) {
 				clearInterval(emitInterval);
+				console.log(results.winner);
+				console.log(results.loser);
 			})
+
 			emitInterval = setInterval(function() {
 				io.emit('gameState', currentGame.state());
 
-				// if (currentGame.ball.out(currentGame.space)) {
-				// 	var winner = keepWinner(currentGame);
 				// 	placeLoserInQueue(currentGame);
 					// currentGame = new game();
 					// placePlayer(currentGame);
