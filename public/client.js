@@ -72,7 +72,6 @@ socket.on('onconnected', function(data) {
 });
 
 socket.on('status', function(data) {
-	console.log(data.id);
 	if (userid === data.id && data.status === 'left') {
 		$('.status').text("You are Left Paddle!")
 		console.log(data.id)

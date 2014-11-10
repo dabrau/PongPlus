@@ -16,28 +16,41 @@ var gameQueue = [];
 
 var setLeftPlayer = function(game, socket) {
 	game.player.left = socket.userid;
-	socket.emit('status', {id: game.player.left, status: 'left'});
+	socket.emit('status', {id: socket.userid, status: 'left'});
 };
 
 var setRightPlayer = function(game, socket) {
 	game.player.right = socket.userid;
-	socket.emit('status', {id: game.player.right, status: 'right'});
+	socket.emit('status', {id: socket.userid, status: 'right'});
 };
 
-var setInQueue = function(queue, socket) {
-	queue.push(socket.id)
-	socket.emit('player', {id: socket.userid, position: gameQueue.indexOf(socket.userid)});
+var setInQueue = function(queue, id) {
+	queue.push(id)
+	io.emit('status', {id: id, status: queue.indexOf(id)});
+};
+
+var nextPlayer = function(queue) {
+	return queue.shift();
 }
 
-var setPlayer = function(game, socket, queue) {
+var setPlayer = function(game, queue, socket) {
 	if (!game.player.left) {
 		setLeftPlayer(game, socket);
-	} else if (!game.right) {
-		setRightPlayer(currentGame, socket);
+	} else if (!game.player.right) {
+		setRightPlayer(game, socket);
 	} else {
-		setInQueue(queue, socket);
+		setInQueue(queue, socket.userid);
 	} 
 };
+
+var updatePlayers = function (game, queue) {
+
+	for (var i = 0; i < queue.length; i++) {
+		io.emit('status', {id: queue[i], status: i});
+	}
+	io.emit('status', {id: game.player.left, status: 'left'});
+	io.emit('status', {id: game.player.right, status: 'right'});
+}
 
 
 io.on('connection', function (socket) {
@@ -50,34 +63,23 @@ io.on('connection', function (socket) {
 		return data
 	}());
 
-	setPlayer(currentGame, socket, gameQueue);
-
+	setPlayer(currentGame, gameQueue, socket);
 
 	socket.on('start', function(data) {
 		if (data.id === currentGame.player.right) {
 			currentGame.start(function(results) {
 				clearInterval(emitInterval);
-				console.log(results.winner);
-				console.log(results.loser);
-			})
+		
+				currentGame.reset();
+		
+				setInQueue(gameQueue, results.loser);
+				currentGame.player.left = results.winner;
+				currentGame.player.right = nextPlayer(gameQueue);
 
+				updatePlayers(currentGame, gameQueue);
+			})
 			emitInterval = setInterval(function() {
 				io.emit('gameState', currentGame.state());
-
-				// 	placeLoserInQueue(currentGame);
-					// currentGame = new game();
-					// placePlayer(currentGame);
-					// currentGame.player.left = winner;
-
-					// for (var i = 0; i < gameQueue.length; i++) {
-					// 	io.emit('player', {id: gameQueue[i], position: i});
-					// }
-					
-					
-					// io.emit('player', {id: currentGame.player.right, p: 'R'});
-					// io.emit('player', {id: currentGame.player.left, p: 'L'});
-					// clearInterval(emitInterval);
-				// }
 			}, 16);
 		}
 	});
