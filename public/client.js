@@ -74,11 +74,9 @@ socket.on('onconnected', function(data) {
 socket.on('status', function(data) {
 	if (userid === data.id && data.status === 'left') {
 		$('.status').text("You are Left Paddle!")
-		console.log(data.id)
 	} else if (userid === data.id && data.status === 'right') {
 		$('.status').text('You are Right Paddle!')
 		$('.start').show();
-		console.log(data.id)
 	} else if (userid === data.id) {
 		$('.status').text(data.status + ' waiting ahead of you!')
 	}
@@ -86,7 +84,6 @@ socket.on('status', function(data) {
 
 
 socket.on('gameState', function(data) {
-	console.log(data);
 	Game.space.draw(data.x, data.y, data.l, data.lh, data.r, data.rh);
 });
 
@@ -99,9 +96,20 @@ $('.start').on('click', function () {
 });
 
 $(document).on('keydown', function(e) {
-	socket.emit('move', {key: e.keyCode, id: userid})
+	if (e.keyCode == 38) {
+		socket.emit('move up', {id: userid})
+	}
+	if (e.keyCode == 40) {
+		socket.emit('move down', {id: userid})
+		console.log("move down")
+	}
 });
 
 $(document).on('keyup', function(e) {
-	socket.emit('stop', {key: e.keyCode, id: userid})
+	if (e.keyCode == 38) {
+		socket.emit('stop up', {id: userid})
+	}
+	if (e.keyCode == 40) {
+		socket.emit('stop down', {id: userid})
+	}
 });
