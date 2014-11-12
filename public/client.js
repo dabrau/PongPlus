@@ -74,11 +74,13 @@ socket.on('onconnected', function(data) {
 socket.on('status', function(data) {
 	if (userid === data.id && data.status === 'left') {
 		$('.status').text("You are Left Paddle!")
+		$('.start').hide();
 	} else if (userid === data.id && data.status === 'right') {
 		$('.status').text('You are Right Paddle!')
 		$('.start').show();
 	} else if (userid === data.id) {
 		$('.status').text(data.status + ' waiting ahead of you!')
+		$('.start').hide();
 	}
 });
 

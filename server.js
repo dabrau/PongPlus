@@ -10,7 +10,8 @@ var game = require('./game.js')
 app.use(express.static(__dirname + '/public'));
 
 var currentGame = new game();
-var emitInterval = undefined;
+var timer;
+var emitInterval;
 var gameQueue = [];
 
 var setLeftPlayer = function(game, socket) {
@@ -42,6 +43,7 @@ var setPlayer = function(game, queue, socket) {
 		setLeftPlayer(game, socket);
 	} else if (!game.player.right) {
 		setRightPlayer(game, socket);
+		startTimer(game, queue);
 	} else {
 		setInQueue(queue, socket.userid);
 	} 
@@ -64,15 +66,27 @@ var updateAll =  function(game, queue) {
 }
 
 var replaceRightPaddle = function(game, queue) {
+	setInQueue(queue, game.player.right)
 	game.player.right = nextPlayer(queue);
-	updatePlayers(game, queue);
+	clearTimeout(timer)
+	updateAll(game, queue);
+	startTimer(game, queue)
 };
 
 var stopGameDisconnect = function(game) {
 	game.stopGame();
 	clearInterval(emitInterval)
 	game.reset();
-}
+	clearTimeout(timer)
+};
+
+var startTimer = function(game, queue) {
+	timer = setTimeout(function() {
+		if (!game.inProgress) {
+			replaceRightPaddle(game, queue)
+		}
+	}, 30000)
+};
 
 io.on('connection', function (socket) {
 	socket.userid = UUID(); //set connection with an id
@@ -87,12 +101,14 @@ io.on('connection', function (socket) {
 	
 	socket.on('start', function(data) {
 		if (data.id === currentGame.player.right) {
+			clearTimeout(timer);
 			currentGame.start(function(results) { //game start takes a callback that has the results as an object
-				clearInterval(emitInterval);
+				clearInterval(emitInterval); //stop broadcasting the game
 				currentGame.reset();
 				setInQueue(gameQueue, results.loser);
 				currentGame.player.left = results.winner; //winner goes to left paddle and right paddle is replaced
 				currentGame.player.right = nextPlayer(gameQueue);
+				startTimer(currentGame, gameQueue);
 				updateAll(currentGame, gameQueue); //notify the clients of new positions
 			})
 			emitInterval = setInterval(function() {
