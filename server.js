@@ -36,7 +36,7 @@ var removeFromQueue = function(queue, id) {
 
 var nextPlayer = function(queue) {
 	return queue.shift();
-}
+};
 
 var setPlayer = function(game, queue, socket) {
 	if (!game.player.left) {
@@ -53,24 +53,32 @@ var updateQueue = function(queue) {
 	for (var i = 0; i < queue.length; i++) {
 		io.emit('status', {id: queue[i], status: i});
 	}
-}
+};
 
 var updatePlayers = function(game, queue) {
 	io.emit('status', {id: game.player.left, status: 'left'});
 	io.emit('status', {id: game.player.right, status: 'right'});
-}
+};
 
 var updateAll =  function(game, queue) {
 	updateQueue(queue);
 	updatePlayers(game, queue);
-}
+	console.log("clients updated")
+};
 
 var replaceRightPaddle = function(game, queue) {
-	setInQueue(queue, game.player.right)
+	console.log('right player is being replaced')
+	if (game.player.right) { 
+		setInQueue(queue, game.player.right)
+	} 
 	game.player.right = nextPlayer(queue);
-	clearTimeout(timer)
+	if (game.player.right) { 
+		startTimer(game, queue) 
+	}
+	console.log(game.player.left + " left")
+	console.log(game.player.right + " right")
+	console.log(queue)
 	updateAll(game, queue);
-	startTimer(game, queue)
 };
 
 var stopGameDisconnect = function(game) {
@@ -83,6 +91,7 @@ var stopGameDisconnect = function(game) {
 var startTimer = function(game, queue) {
 	timer = setTimeout(function() {
 		if (!game.inProgress) {
+			console.log('right player timed out')
 			replaceRightPaddle(game, queue)
 		}
 	}, 30000)
@@ -90,7 +99,7 @@ var startTimer = function(game, queue) {
 
 io.on('connection', function (socket) {
 	socket.userid = UUID(); //set connection with an id
-
+	console.log(socket.userid + " connected")
 	socket.emit('onconnected', function() {
 		data = currentGame.constants(); //send id and constants to the client
 		data.id = socket.userid;
@@ -98,14 +107,19 @@ io.on('connection', function (socket) {
 	}());
 
 	setPlayer(currentGame, gameQueue, socket); //on connection place the player
+	console.log(currentGame.player.right + " right");
+	console.log(currentGame.player.left + " left");
+	console.log(gameQueue);
 	
 	socket.on('start', function(data) {
 		if (data.id === currentGame.player.right) {
+			console.log('game started')
 			clearTimeout(timer);
 			currentGame.start(function(results) { //game start takes a callback that has the results as an object
 				clearInterval(emitInterval); //stop broadcasting the game
+				console.log('game ended')
 				currentGame.reset();
-				setInQueue(gameQueue, results.loser);
+				setInQueue(gameQueue, results.loser); //move loser to the queue
 				currentGame.player.left = results.winner; //winner goes to left paddle and right paddle is replaced
 				currentGame.player.right = nextPlayer(gameQueue);
 				startTimer(currentGame, gameQueue);
@@ -120,19 +134,22 @@ io.on('connection', function (socket) {
 	socket.on('disconnect', function() {
 		if (this.userid === currentGame.player.left) {
 			var holder = currentGame.player.right;
+			console.log(currentGame.player.left + " disconnected left player")
 			stopGameDisconnect(currentGame, gameQueue);
 			currentGame.player.left = holder;
 			replaceRightPaddle(currentGame, gameQueue);
 		} else if (this.userid === currentGame.player.right) {
 			var holder = currentGame.player.left;
+			console.log(currentGame.player.right + " disconnected right player")
 			stopGameDisconnect(currentGame, gameQueue);
 			currentGame.player.left = holder;
 			replaceRightPaddle(currentGame, gameQueue);
 		} else {
+			console.log(this.userid + " disconnected from the queue")
 			removeFromQueue(gameQueue, this.userid)
 			updateQueue(gameQueue);
 		}		
-	})
+	});
 
 	socket.on('move up', function (data) {
 		if (data.id === currentGame.player.left) {
@@ -150,7 +167,7 @@ io.on('connection', function (socket) {
 		if (data.id === currentGame.player.right) {
 			currentGame.paddleR.downPressed = true;
 		}
-	})
+	});
 
 	socket.on('stop down', function (data) {
 		if (data.id === currentGame.player.left) {
