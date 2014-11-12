@@ -76,12 +76,15 @@ var stopGameDisconnect = function(game) {
 
 io.on('connection', function (socket) {
 	socket.userid = UUID(); //set connection with an id
+
 	socket.emit('onconnected', function() {
 		data = currentGame.constants(); //send id and constants to the client
 		data.id = socket.userid;
 		return data
 	}());
+
 	setPlayer(currentGame, gameQueue, socket); //on connection place the player
+	
 	socket.on('start', function(data) {
 		if (data.id === currentGame.player.right) {
 			currentGame.start(function(results) { //game start takes a callback that has the results as an object

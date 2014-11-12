@@ -18,10 +18,10 @@ Game.prototype.init = function() {
 
 	this.ball = new Ball(this.space);
 
-	this.paddleL = new Paddle(this.space, 75, 10, 0, 5, 4);
+	this.paddleL = new Paddle(this.space, 80, 10, 0, 5, 4);
 	this.paddleL.surface = this.paddleL.w; //paddle width
 
-	this.paddleR = new Paddle(this.space, 75, 10, this.space.width - 10, 5, 4);
+	this.paddleR = new Paddle(this.space, 80, 10, this.space.width - 10, 5, 4);
 	this.paddleR.surface = this.space.width - this.paddleR.w; //space width - paddle width
 };
 
@@ -105,8 +105,8 @@ Game.prototype.start = function(callback) {
 
 function Ball(space) {
 	//initial ball properties
-	this.x =  parseInt(space.width / 4);
-	this.y =  parseInt(space.height / 2);
+	this.x =  Math.round(space.width / 4);
+	this.y =  Math.round(space.height / 2);
 	this.dx = 5;
 	this.dy = 0;
 	this.v = 5; //velocity
@@ -159,14 +159,14 @@ Ball.prototype.collisionAngle = function(coefficient) {
 
 Ball.prototype.dxNew = function(collisionAngle, v) {
 	if (this.dx > 0)  {
-		this.dx = parseInt(-Math.cos(collisionAngle) * v);
+		this.dx = Math.round(-Math.cos(collisionAngle) * v);
 	} else {
-		this.dx = parseInt(Math.cos(collisionAngle) * v);
+		this.dx = Math.round(Math.cos(collisionAngle) * v);
 	}
 };
 
 Ball.prototype.dyNew = function(collisionAngle, v) {
-	this.dy = parseInt(Math.sin(collisionAngle)  * v);
+	this.dy = Math.round(Math.sin(collisionAngle)  * v);
 };
 
 Ball.prototype.paddleBounceDxDy = function(v, collisionAngle) {
@@ -205,7 +205,7 @@ Ball.prototype.directionChange = function(space, paddleL, paddleR) {
 
 
 function Paddle(gameSpace, h, w, x, sens, shortenLength) {
-	this.yTop = gameSpace.height / 2 - h / 2 ; //start the paddle in the middle of the game space
+	this.yTop = Math.round(gameSpace.height / 2 - h / 2); //start the paddle in the middle of the game space
 	this.h = h; //length of paddle
 	this.shortenLength = shortenLength //number of pixels to shorten the paddle
 	this.w = w; //width of paddle
@@ -221,7 +221,7 @@ Paddle.prototype.yBottom = function () {
 };
 
 Paddle.prototype.yMid = function () {
-	return this.h / 2 + this.yTop
+	return Math.floor(this.h / 2 + this.yTop)
 };
 
 Paddle.prototype.moveUp = function() {
@@ -250,7 +250,7 @@ Paddle.prototype.shortenHeight = function() {
 };
 
 Paddle.prototype.reposition = function() {
-	this.yTop += this.shortenLength / 2; //reposition the paddle when it gets shorter
+	this.yTop += Math.round(this.shortenLength / 2); //reposition the paddle when it gets shorter
 };
 
 Paddle.prototype.move = function (space) {
