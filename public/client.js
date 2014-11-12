@@ -114,21 +114,3 @@ $(document).on('keyup', function(e) {
 		socket.emit('stop down', {id: userid})
 	}
 });
-
-
-
-$('.up').on('mousedown', function(e) {
-	console.log('it fired up')
-		socket.emit('move up', {id: userid})
-	}).on('mouseup', function(e) {
-		socket.emit('stop up', {id: userid})
-	})
-
-
-$('.down').on('mousedown', function(e) {
-	console.log('it fired down')
-		socket.emit('move down', {id: userid})
-	}).on('mouseup', function(e) {
-		socket.emit('stop down', {id: userid})
-	});
-
