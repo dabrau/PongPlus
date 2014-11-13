@@ -99,7 +99,7 @@ $('.start').on('click', function () {
 });
 
 $(document).on('keydown', function(e) {
-	if (e.keyCode == 65) {
+	if (e.keyCode == 87) {
 		socket.emit('move up', {id: userid})
 	}
 	if (e.keyCode == 83) {
@@ -109,7 +109,7 @@ $(document).on('keydown', function(e) {
 });
 
 $(document).on('keyup', function(e) {
-	if (e.keyCode == 65) {
+	if (e.keyCode == 87) {
 		socket.emit('stop up', {id: userid})
 	}
 	if (e.keyCode == 83) {
