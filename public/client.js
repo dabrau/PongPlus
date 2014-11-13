@@ -99,20 +99,20 @@ $('.start').on('click', function () {
 });
 
 $(document).on('keydown', function(e) {
-	if (e.keyCode == 38) {
+	if (e.keyCode == 65) {
 		socket.emit('move up', {id: userid})
 	}
-	if (e.keyCode == 40) {
+	if (e.keyCode == 83) {
 		socket.emit('move down', {id: userid})
 		console.log("move down")
 	}
 });
 
 $(document).on('keyup', function(e) {
-	if (e.keyCode == 38) {
+	if (e.keyCode == 65) {
 		socket.emit('stop up', {id: userid})
 	}
-	if (e.keyCode == 40) {
+	if (e.keyCode == 83) {
 		socket.emit('stop down', {id: userid})
 	}
 });
